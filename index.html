@@ -120,6 +120,8 @@ html { scroll-behavior: smooth; }
 
 <body class="bg-gradient-to-br from-black via-gray-900 to-black text-white min-h-screen">
 
+<audio id="bgMusic" loop preload="auto"></audio>
+
 <div id="startScreen" class="min-h-screen flex flex-col justify-center items-center text-center p-6">
     <h1 class="text-5xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
         🧠 พิชิตชีวะขั้นเทพ
@@ -136,7 +138,7 @@ html { scroll-behavior: smooth; }
             💪 ระบบกล้ามเนื้อ (15 ข้อ)
         </button>
         
-        <button onclick="chooseLevel('all')" class="bg-green-600 p-4 rounded-xl shadow-lg hover:scale-105 transition col-span-2">รวมทุกระดับ</button>
+        <button onclick="chooseLevel('all')" class="bg-green-600 p-4 rounded-xl shadow-lg hover:scale-105 transition col-span-2">ข้อสอบรวมทุกระดับ</button>
         <button onclick="chooseLevel('fast')" class="bg-yellow-500 p-4 rounded-xl shadow-lg hover:scale-105 transition col-span-2 font-bold text-black">⚡ FAST (สุ่ม 10 ข้อ)</button>
         <button onclick="showLibrary()" class="bg-indigo-600 hover:bg-indigo-500 p-4 rounded-xl shadow-lg transition transform hover:scale-105 col-span-2 font-bold text-xl">
             📖 คลังเนื้อหาบทเรียน
@@ -574,6 +576,28 @@ m5_menu: `
             </div>
         </div>
     `,
+    m6_menu: `
+        <div class="space-y-6 text-gray-200">
+            <h3 class="text-3xl font-black text-green-400 border-b-2 border-green-500 pb-2">🌿 เลือกเทอม (ชั้น ม.6)</h3>
+            
+            <div class="grid gap-4 mt-4">
+                <button onclick="showContent('m6_term1')" class="bg-blue-900/30 hover:bg-blue-800/60 p-6 rounded-2xl border border-blue-500/50 transition-all text-left btn-feedback">
+                    <div class="font-bold text-xl text-blue-200 mb-1">ภาคเรียนที่ 1 (เล่ม 5) 🧠</div>
+                    <p class="text-sm font-normal text-gray-400">เน้นเรื่อง "การควบคุมและพฤติกรรม": ระบบประสาท, อวัยวะรับความรู้สึก, ระบบต่อมไร้ท่อ และพฤติกรรมสัตว์</p>
+                </button>
+
+                <button onclick="showContent('m6_term2')" class="bg-teal-900/30 hover:bg-teal-800/60 p-6 rounded-2xl border border-teal-500/50 transition-all text-left btn-feedback">
+                    <div class="font-bold text-xl text-teal-200 mb-1">ภาคเรียนที่ 2 (เล่ม 6) 🌎</div>
+                    <p class="text-sm font-normal text-gray-400">เน้นเรื่อง "ระบบนิเวศและประชากร": ความหลากหลายทางชีวภาพ, ประชากร, และทรัพยากรธรรมชาติ</p>
+                </button>
+            </div>
+
+            <button onclick="document.getElementById('libraryScreen').classList.add('hidden'); chooseLevel('m6')" 
+                class="w-full py-4 mt-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl font-black text-white shadow-xl hover:scale-105 transition btn-feedback">
+                🚀 ข้ามไปทำแบบทดสอบ ม.6 รวม (30 ข้อ)
+            </button>
+        </div>
+    `,
     m6_term1: `
     <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
         <button onclick="showContent('m6_menu')" class="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center mb-2 transition">
@@ -621,6 +645,63 @@ m5_menu: `
         </div>
     </div>
 `,
+m6_term2: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
+            <button onclick="showContent('m6_menu')" class="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center mb-2 transition">
+                ◀ ย้อนกลับไปเลือกเทอม
+            </button>
+            
+            <h3 class="text-3xl font-black text-cyan-300 border-b-2 border-cyan-500 pb-2">🌍 สรุปชีวะ ม.6 เทอม 2 (ระบบนิเวศ & ความหลากหลาย)</h3>
+            
+            <section class="space-y-3">
+                <h4 class="text-lg font-bold text-cyan-200 bg-cyan-900/40 p-2 rounded-lg pl-4 border-l-4 border-cyan-400">บทที่ 22: ระบบนิเวศ (Ecosystem)</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">● การถ่ายทอดพลังงาน:</b> ผ่านโซ่อาหาร (Food Chain) และสายใยอาหาร (Food Web)</p>
+                    <blockquote class="border-l-2 border-yellow-500 pl-3 py-1 bg-yellow-900/20 text-[12px]">
+                        <b>กฎ 10 เปอร์เซ็นต์ (Ten Percent Law):</b> พลังงานส่งต่อไปยังลำดับถัดไปได้เพียง 10% อีก 90% สูญเสียเป็นความร้อนหรือใช้ในกิจกรรมร่างกาย
+                    </blockquote>
+                    <p><b class="text-white">● พีระมิดพลังงาน (Pyramid of Energy):</b> ต้องเป็นรูปทรงตั้งฐานกว้างเสมอ! เพราะพลังงานจะลดลงตามลำดับขั้นการกิน</p>
+                    <p><b class="text-white">● วัฏจักรสาร:</b> เน้น <b>วัฏจักรไนโตรเจน</b> (ใช้แบคทีเรีย Rhizobium ตรึง $N_2$) และ <b>วัฏจักรฟอสฟอรัส</b> (ไม่มีสถานะก๊าซในอากาศ สะสมในหิน/ดิน)</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-cyan-200 bg-cyan-900/40 p-2 rounded-lg pl-4 border-l-4 border-cyan-400">บทที่ 23: ประชากร (Population)</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">● การกระจายตัว:</b> แบบกลุ่ม (Clumped - พบบ่อยสุด), แบบสม่ำเสมอ (Uniform), แบบสุ่ม (Random)</p>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="bg-slate-800/50 p-2 rounded border border-slate-700">
+                            <span class="text-orange-400 font-bold">J-Shape:</span> เติบโตแบบ Exponential (ทรัพยากรไม่จำกัด)
+                        </div>
+                        <div class="bg-slate-800/50 p-2 rounded border border-slate-700">
+                            <span class="text-green-400 font-bold">S-Shape:</span> เติบโตแบบ Logistic (มีค่า $K$ หรือ Carrying Capacity)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-cyan-200 bg-cyan-900/40 p-2 rounded-lg pl-4 border-l-4 border-cyan-400">บทที่ 24: ความหลากหลายทางชีวภาพ</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">● 3 ระดับความหลากหลาย:</b> พันธุกรรม (Genetic), ชนิด (Species), และระบบนิเวศ (Ecological)</p>
+                    <p><b class="text-white">● ภัยคุกคาม (HIPPO):</b></p>
+                    <ul class="grid grid-cols-1 gap-1 text-gray-400 list-none pl-2">
+                        <li>📍 <b class="text-red-400">H</b>abitat Loss: การสูญเสียที่อยู่อาศัย (สาเหตุหลัก!)</li>
+                        <li>📍 <b class="text-red-400">I</b>nvasive Species: ชนิดพันธุ์ต่างถิ่นรุกราน</li>
+                        <li>📍 <b class="text-red-400">P</b>ollution: มลพิษทางสิ่งแวดล้อม</li>
+                        <li>📍 <b class="text-red-400">P</b>opulation Growth: ประชากรมนุษย์เพิ่มขึ้น</li>
+                        <li>📍 <b class="text-red-400">O</b>verexploitation: การใช้ทรัพยากรเกินจำกัด</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="mt-8">
+                <button onclick="startFastQuiz()" class="w-full py-5 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-2xl font-black text-white text-center shadow-xl hover:scale-105 transition-all">
+                    🎯 เริ่มทำแบบทดสอบ ม.6 เทอม 2 (10 ข้อ)
+                </button>
+            </div>
+        </div>
+    `,
     animal: `
         <div class="space-y-6 text-gray-200 text-sm">
             <h3 class="text-3xl font-black text-yellow-400 border-b-2 border-yellow-500 pb-2">🐾 อาณาจักรสัตว์ (Kingdom Animalia)</h3>
@@ -709,30 +790,201 @@ m5_menu: `
         </div>
     `,
 
-    muscle: `
-        <div class="space-y-4">
-            <h3 class="text-2xl font-bold text-orange-400 border-b border-orange-500 pb-2">💪 ระบบกล้ามเนื้อ</h3>
-            <p class="text-sm"><b>กล้ามเนื้อลาย:</b> มีลาย, บังคับได้ (Voluntary), ยึดกระดูก</p>
-            <p class="text-sm"><b>กล้ามเนื้อเรียบ:</b> ไม่มีลาย, บังคับไม่ได้, อวัยวะภายใน</p>
-            <p class="text-sm"><b>กล้ามเนื้อหัวใจ:</b> มีลาย, มี Intercalated disc (ส่งไฟฟ้าเร็ว)</p>
-            
-            <button onclick="document.getElementById('libraryScreen').classList.add('hidden'); chooseLevel('muscle')" 
-                class="w-full py-4 mt-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl font-black text-white shadow-xl hover:scale-105 transition btn-feedback">
-                🚀 เริ่มทำแบบทดสอบระบบกล้ามเนื้อ
-            </button>
-        </div>`,
+   muscle: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in zoom-in duration-300">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🦴</span>
+                <h3 class="text-3xl font-black text-yellow-400 uppercase tracking-wider">ระบบโครงกระดูกและกล้ามเนื้อ</h3>
+            </div>
+
+            <div class="bg-slate-900/60 border-2 border-yellow-500/40 p-5 rounded-2xl shadow-xl">
+                <h4 class="text-xl font-bold text-yellow-400 mb-3 flex items-center gap-2">
+                    📌 Check-list ระบบโครงกระดูก
+                </h4>
+                <p class="text-sm mb-4 text-gray-300">ร่างกายผู้ใหญ่ประกอบด้วยกระดูกทั้งหมด <span class="text-white font-bold">206 ชิ้น</span> แบ่งเป็น 2 กลุ่มหลัก:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <ul class="space-y-2">
+                        <li>• <b class="text-white">Axial Skeleton (กระดูกแกน):</b> <span class="text-orange-400">80 ชิ้น</span> (กะโหลก, สันหลัง, ซี่โครง, อก)</li>
+                    </ul>
+                    <ul class="space-y-2">
+                        <li>• <b class="text-white">Appendicular (กระดูกรยางค์):</b> <span class="text-orange-400">126 ชิ้น</span> (แขน, ขา, สะบัก, เชิงกราน)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                    <h5 class="text-blue-400 font-bold mb-2 border-b border-slate-700 pb-1">ก. กระดูกแกน (Axial)</h5>
+                    <ul class="text-sm space-y-1 text-gray-300">
+                        <li>- <b class="text-white">Skull:</b> ปกป้องสมอง</li>
+                        <li>- <b class="text-white">Vertebral Column:</b> 33 ชิ้น (C, T, L, S, C)</li>
+                        <li>- <b class="text-white">Ribs:</b> 12 คู่ ปกป้องหัวใจ/ปอด</li>
+                        <li>- <b class="text-white">Sternum:</b> กระดูกอกตรงกลาง</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                    <h5 class="text-green-400 font-bold mb-2 border-b border-slate-700 pb-1">ข. กระดูกรยางค์ (Appendicular)</h5>
+                    <ul class="text-sm space-y-1 text-gray-300">
+                        <li>- <b class="text-white">ส่วนแขน:</b> Scapula, Clavicle, Humerus, Radius, Ulna</li>
+                        <li>- <b class="text-white">ส่วนขา:</b> Pelvic, Femur (ยาวสุด), Tibia, Fibula</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-700 bg-slate-900/40">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead class="bg-slate-800 text-blue-300 uppercase font-bold">
+                        <tr>
+                            <th class="p-3">ชนิดกล้ามเนื้อ</th>
+                            <th class="p-3 text-center">ลักษณะ</th>
+                            <th class="p-3">ตำแหน่ง/การทำงาน</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr>
+                            <td class="p-3 font-bold text-white">Skeletal (โครงร่าง)</td>
+                            <td class="p-3 text-center">มีลาย, หลาย Nucleus</td>
+                            <td class="p-3">ติดกระดูก, <span class="text-green-400 font-bold">Voluntary</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">Smooth (เรียบ)</td>
+                            <td class="p-3 text-center">ไม่มีลาย, รูปกระสวย</td>
+                            <td class="p-3">อวัยวะภายใน, <span class="text-red-400 font-bold">Involuntary</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">Cardiac (หัวใจ)</td>
+                            <td class="p-3 text-center">มีลาย, แตกแขนง</td>
+                            <td class="p-3">หัวใจเท่านั้น, <span class="text-red-400 font-bold">Involuntary</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                <h4 class="text-yellow-400 font-bold mb-3 flex items-center gap-2">💪 กล้ามเนื้อและการทำงาน</h4>
+                <div class="text-sm space-y-2">
+                    <p>● <b class="text-white italic">Antagonism:</b> การทำงานเป็นคู่ตรงข้าม (ตัวหนึ่งหด ตัวหนึ่งคลาย)</p>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-900/50 p-3 rounded-lg">
+                        <div><span class="text-blue-400 font-bold">Flexor:</span> งออวัยวะ (เช่น Biceps)</div>
+                        <div><span class="text-orange-400 font-bold">Extensor:</span> เหยียดอวัยวะ (เช่น Triceps)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-red-950/30 border border-red-500/40 p-5 rounded-2xl shadow-lg border-l-8">
+                <h4 class="text-red-400 font-bold mb-3 flex items-center gap-2">
+                    ⚠️ อย่าจำสับสน! (ส่วนประกอบเสริม)
+                </h4>
+                <ul class="text-sm space-y-2 text-gray-300">
+                    <li>• <b class="text-white">Ligament (เอ็นยึดกระดูก):</b> เชื่อมระหว่าง <span class="text-red-400 underline">กระดูก กับ กระดูก</span></li>
+                    <li>• <b class="text-white">Tendon (เอ็นกล้ามเนื้อ):</b> เชื่อมระหว่าง <span class="text-red-400 underline">กล้ามเนื้อ กับ กระดูก</span></li>
+                    <li>• <b class="text-white">Cartilage (กระดูกอ่อน):</b> ทำหน้าที่ <span class="text-blue-300 italic">ลดแรงเสียดทาน</span> บริเวณข้อต่อ</li>
+                </ul>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="musclefastquiz()" class="w-full py-4 bg-gradient-to-r from-yellow-600 to-orange-700 rounded-xl font-black text-white shadow-xl hover:scale-[1.02] transition-transform">
+                    🔥 ตะลุยโจทย์ระบบโครงสร้าง (Fast Quiz)
+                </button>
+            </div>
+        </div>
+    `,
 
     plant: `
-        <div class="space-y-4">
-            <h3 class="text-2xl font-bold text-green-400 border-b border-green-500 pb-2">🌿 สรุปเนื้อเยื่อพืช</h3>
-            <p class="text-sm"><b>Xylem:</b> ลำเลียงน้ำ (เซลล์ตาย: Vessel/Tracheid)</p>
-            <p class="text-sm"><b>Phloem:</b> ลำเลียงอาหาร (เซลล์มีชีวิต: Sieve tube/Companion cell)</p>
-            
-            <button onclick="document.getElementById('libraryScreen').classList.add('hidden'); chooseLevel('m5')" 
-                class="w-full py-4 mt-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl font-black text-white shadow-xl hover:scale-105 transition btn-feedback">
-                🚀 เริ่มทำแบบทดสอบเรื่องพืช (ม.5)
-            </button>
-        </div>`
+        <div class="space-y-6 text-gray-200 animate-in fade-in zoom-in duration-300">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🌿</span>
+                <h3 class="text-3xl font-black text-green-400 uppercase tracking-wider">เนื้อเยื่อและการลำเลียงของพืช</h3>
+            </div>
+
+            <div class="bg-slate-900/60 border-2 border-green-500/40 p-5 rounded-2xl shadow-xl">
+                <h4 class="text-xl font-bold text-green-400 mb-3 flex items-center gap-2">
+                    📌 Check-list ประเภทเนื้อเยื่อพืช
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="space-y-2">
+                        <p class="font-bold text-white border-b border-green-800 pb-1">1. เนื้อเยื่อเจริญ (Meristem)</p>
+                        <ul class="pl-2 space-y-1">
+                            <li>• <b class="text-green-300">Apical:</b> ปลายยอด/ราก (พืชสูงขึ้น)</li>
+                            <li>• <b class="text-green-300">Lateral:</b> วาสคิวลาร์ แคมเบียม (พืชอ้วนขึ้น)</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="font-bold text-white border-b border-green-800 pb-1">2. เนื้อเยื่อถาวร (Permanent)</p>
+                        <ul class="pl-2 space-y-1">
+                            <li>• <b class="text-blue-300">Epidermis:</b> ผิวชั้นนอกสุด (มีเซลล์คุม)</li>
+                            <li>• <b class="text-blue-300">Parenchyma:</b> พบมากสุด สะสมอาหาร</li>
+                            <li>• <b class="text-blue-300">Sclerenchyma:</b> <span class="text-red-400 italic">เซลล์ตายแล้ว</span> ผนังหนามาก</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-700 bg-slate-900/40 shadow-inner">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead class="bg-slate-800 text-green-300 uppercase font-bold">
+                        <tr>
+                            <th class="p-3">คุณสมบัติ</th>
+                            <th class="p-3">Xylem (ไซเล็ม)</th>
+                            <th class="p-3">Phloem (โฟลเอ็ม)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-gray-300">
+                        <tr>
+                            <td class="p-3 font-bold text-white">สิ่งที่ขนส่ง</td>
+                            <td class="p-3">💦 น้ำ + แร่ธาตุ</td>
+                            <td class="p-3">🍭 อาหาร (น้ำตาล)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">สถานะเซลล์</td>
+                            <td class="p-3 text-red-400 font-semibold italic">ตายแล้ว (ท่อกลวง)</td>
+                            <td class="p-3 text-green-400 font-semibold">มีชีวิต</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">ทิศทาง</td>
+                            <td class="p-3">⬆️ ล่างขึ้นบน (ทางเดียว)</td>
+                            <td class="p-3">↕️ ทุกทิศทาง (Source ➔ Sink)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">แรงขับเคลื่อน</td>
+                            <td class="p-3">การคายน้ำ (Transpiration)</td>
+                            <td class="p-3">ความดัน (Pressure Flow)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                <h4 class="text-blue-400 font-bold mb-3 flex items-center gap-2">💧 เส้นทางของน้ำเข้าสู่ราก (Root Pathways)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[13px]">
+                    <div class="p-2 bg-slate-900/50 rounded border-l-4 border-orange-500">
+                        <b class="text-orange-400">Apoplast:</b> วิ่งตามผนังเซลล์ (เร็วที่สุด แต่โดนกั้นที่ Endodermis)
+                    </div>
+                    <div class="p-2 bg-slate-900/50 rounded border-l-4 border-green-500">
+                        <b class="text-green-400">Symplast:</b> วิ่งผ่านไซโทพลาซึม (เข้าช่อง Plasmodesmata)
+                    </div>
+                    <div class="p-2 bg-slate-900/50 rounded border-l-4 border-blue-500">
+                        <b class="text-blue-400">Transmembrane:</b> วิ่งทะลุผ่านเยื่อหุ้มเซลล์ทีละชั้น
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-950/30 border border-blue-500/40 p-5 rounded-2xl shadow-lg border-l-8">
+                <h4 class="text-blue-300 font-bold mb-2 flex items-center gap-2">💡 เกร็ดความรู้ (ม.ปลาย)</h4>
+                <ul class="text-sm space-y-2 text-gray-400">
+                    <li>• <b class="text-white">Transpiration Pull:</b> เป็นแรงหลักที่ทำให้พืชสูงเป็น 100 เมตรส่งน้ำขึ้นไปถึงยอดได้</li>
+                    <li>• <b class="text-white">Companion Cell:</b> เซลล์พี่เลี้ยงใน Phloem คอยส่งพลังงานให้ Sieve tube ที่ไม่มีนิวเคลียส</li>
+                    <li>• <b class="text-white">Casparian Strip:</b> แถบขี้ผึ้งที่ชั้น Endodermis บังคับให้น้ำแบบ Apoplast ต้องเปลี่ยนมาเข้า Symplast แทน</li>
+                </ul>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="startFastQuiz()" class="w-full py-4 bg-gradient-to-r from-green-600 to-blue-700 rounded-xl font-black text-white shadow-xl hover:scale-[1.02] transition-transform">
+                    🧪 ทดสอบความรู้ "เนื้อเยื่อพืช" (Fast Quiz)
+                </button>
+            </div>
+        </div>
+    `,
 };
 
 const biologyQuiz = [
@@ -740,6 +992,7 @@ const biologyQuiz = [
     { q: "การสังเคราะห์ด้วยแสงเกิดขึ้นที่ออร์แกเนลล์ใด?", a: "คลอโรพลาสต์", opt: ["ไมโทคอนเดรีย", "คลอโรพลาสต์", "แวคิวโอล", "กอลจิบอดี"] },
     // เพิ่มข้ออื่นๆ ต่อไปเรื่อยๆ ได้เลย
 ];
+playMusic(type);
 // --- ฟังก์ชันดูคลังเนื้อหา ---
 function showContent(key) {
     const container = document.getElementById('libraryContent');
@@ -798,13 +1051,18 @@ function checkAnswer(btn, correct) {
     }
 }
 
+// ==========================================
+// 🚀 ส่วนที่ 3: ระบบการทำงาน (ต่อจาก biologyQuiz)
+// ==========================================
+
+// ฟังก์ชันจัดการการแสดงผลเนื้อหา (รองรับทั้ง libraryContent และ contentText)
 function showContent(key) {
-    // 🔍 เช็คตรงนี้! ถ้าใน HTML ของคุณเขียน <div id="libraryContent">...</div> 
-    // ก็ต้องใช้ชื่อ 'libraryContent' ให้ตรงเป๊ะ
-    const container = document.getElementById('libraryContent'); 
+    // ค้นหากล่องสำหรับแสดงผลที่ตรงกับ HTML ของคุณ
+    const container = document.getElementById('libraryContent') || document.getElementById('contentText'); 
     
     if (container) {
-        container.innerHTML = biologyNotes[key]; // ใส่เนื้อหา
+        // ดึงข้อมูลจาก biologyNotes ถ้าไม่มีให้ขึ้นข้อความแจ้งเตือน
+        container.innerHTML = biologyNotes[key] || "<p class='text-center text-red-400'>กำลังอัปเดตข้อมูล...</p>"; 
         
         // เล่นอนิเมชั่นพุ่งเข้า
         container.classList.remove('page-transition');
@@ -813,31 +1071,51 @@ function showContent(key) {
         
         // เลื่อนหน้าจอกลับไปด้านบนสุด (เผื่อเนื้อหายาว)
         container.scrollTop = 0; 
+        
+        // ถ้าใช้โครงสร้างที่มี contentDisplay ให้แสดงผลด้วย
+        const display = document.getElementById('contentDisplay');
+        if(display) {
+            display.classList.remove('hidden');
+            display.scrollIntoView({ behavior: 'smooth' });
+        }
     } else {
-        console.error("หา ID 'libraryContent' ไม่เจอครับ ลองเช็คใน HTML ดูนะ!");
+        console.error("หา ID สำหรับแสดงผลไม่เจอครับ เช็คใน HTML ว่ามี id='libraryContent' ไหม");
     }
 }
- // ฟังก์ชันกดเข้า FAST Quiz
+
+// แสดงหน้าคลังความรู้
+function showLibrary() {
+    const startScreen = document.getElementById('startScreen');
+    const libraryScreen = document.getElementById('libraryScreen');
+    if(startScreen) startScreen.classList.add('hidden');
+    if(libraryScreen) libraryScreen.classList.remove('hidden');
+}
+
+// ==========================================
+// ⚡ ระบบ FAST QUIZ
+// ==========================================
+let currentScore = 0; // ตัวแปรเก็บคะแนน
+
 function startFastQuiz() {
-    // ⚠️ ตรงนี้สำคัญ: เปลี่ยน 'noteContent' เป็น ID ของกล่องที่คุณใช้โชว์เนื้อหาเว็บคุณ
-    const container = document.getElementById('noteContent'); 
-    
+    // หาระบุกล่องแสดงผล
+    const container = document.getElementById('libraryContent') || document.getElementById('noteContent'); 
     if (!container) return;
 
-    // สุ่ม 10 ข้อ (ถ้าข้อสอบมีไม่ถึง 10 มันจะดึงมาเท่าที่มี)
-    const shuffled = [...fastQuizData].sort(() => 0.5 - Math.random()).slice(0, 10);
+    // สุ่ม 10 ข้อจาก biologyQuiz (ดึงชุดข้อมูลเดิมมาใช้)
+    const shuffled = [...biologyQuiz].sort(() => 0.5 - Math.random()).slice(0, 10);
+    currentScore = 0; // รีเซ็ตคะแนนใหม่
     
     let quizHTML = `<div class="p-4 text-white page-transition">
-        <h2 class="text-2xl font-bold mb-4 shimmer-text">⚡ FAST QUIZ (สุ่ม 10 ข้อ)</h2>`;
+        <h2 class="text-2xl font-bold mb-4 shimmer-text text-center">⚡ FAST QUIZ (สุ่ม 10 ข้อ)</h2>`;
 
     shuffled.forEach((item, index) => {
         quizHTML += `
-            <div class="mb-6 bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <p class="text-lg mb-3">${index + 1}. ${item.q}</p>
+            <div class="mb-6 bg-slate-800/80 p-4 rounded-xl border border-slate-600 shadow-lg">
+                <p class="text-lg mb-3 font-semibold text-green-400">${index + 1}. ${item.q}</p>
                 <div class="grid grid-cols-1 gap-2">
                     ${item.opt.map(opt => `
                         <button onclick="checkQuizAnswer(this, '${item.a}')" 
-                                class="p-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-left btn-feedback transition-colors">
+                                class="p-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-left btn-feedback transition-colors border border-white/5">
                             ${opt}
                         </button>
                     `).join('')}
@@ -845,45 +1123,97 @@ function startFastQuiz() {
             </div>`;
     });
     
-    container.innerHTML = quizHTML + `</div>`;
+    // ปุ่มกลับหน้าหลัก
+    quizHTML += `
+        <button onclick="window.location.reload()" class="w-full p-4 bg-red-500/80 rounded-xl font-bold btn-feedback mt-4 hover:bg-red-500 transition-colors">
+            ↩️ สรุปคะแนน & กลับเมนูหลัก
+        </button>
+    </div>`;
+
+    container.innerHTML = quizHTML;
 }
 
-// ฟังก์ชันตรวจคำตอบ (เมื่อกดตัวเลือก)
+// ฟังก์ชันตรวจคำตอบ
 function checkQuizAnswer(btn, correct) {
     const buttons = btn.parentElement.querySelectorAll('button');
     buttons.forEach(b => b.disabled = true); // ล็อคปุ่มหลังตอบ
     
     if (btn.innerText.trim() === correct) {
-        btn.classList.add('bg-green-600');
-        btn.innerHTML += " ✅";
+        btn.classList.replace('bg-slate-700', 'bg-green-600');
+        btn.innerHTML += " ✅ (ถูกต้อง!)";
+        currentScore++;
     } else {
-        btn.classList.add('bg-red-600');
-        btn.innerHTML += " ❌";
+        btn.classList.replace('bg-slate-700', 'bg-red-600');
+        btn.innerHTML += ` ❌ (ผิด! คำตอบคือ: ${correct})`;
     }
 }
 
-function showLibrary() {
-    document.getElementById('startScreen').classList.add('hidden');
-    document.getElementById('libraryScreen').classList.remove('hidden');
-}
-
-function showContent(topic) {
-    const display = document.getElementById('contentDisplay');
-    const textContainer = document.getElementById('contentText');
-    
-    // เคลียร์ค่าเก่าก่อนแสดงใหม่ กันบัคค้าง
-    textContainer.innerHTML = biologyNotes[topic] || "<p class='text-center'>กำลังอัปเดตข้อมูล...</p>";
-    
-    display.classList.remove('hidden');
-    display.scrollIntoView({ behavior: 'smooth' });
-}
-
+// ==========================================
+// 📜 ระบบ Scroll Progress Bar
+// ==========================================
 window.onscroll = function() {
-    let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    let scrolled = (winScroll / height) * 100;
-    document.getElementById("progressBar").style.width = scrolled + "%";
+    const progressBar = document.getElementById("progressBar");
+    if(progressBar) {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let scrolled = (winScroll / height) * 100;
+        progressBar.style.width = scrolled + "%";
+    }
 };
+
+// ==========================================
+// 🎵 ระบบเสียง Background Music
+// ==========================================
+const musicMap = {
+    menu: 'music/menu.mp3',
+    m4: 'music/m4.mp3',
+    m5: 'music/m5.mp3',
+    m6: 'music/m6.mp3',
+    posn: 'music/posn.mp3',
+    muscle: 'music/muscle.mp3',
+    all: 'music/all.mp3',
+    fast: 'music/fast.mp3',
+    library: 'music/library.mp3'
+};
+
+let musicEnabled = true;
+
+function playMusic(mode = 'menu') {
+    if (!musicEnabled) return;
+
+    const audio = document.getElementById('bgMusic');
+    if(!audio) return; // ป้องกัน Error ถ้าหา Tag Audio ไม่เจอ
+
+    const src = musicMap[mode] || musicMap.menu;
+
+    // เปลี่ยนเพลงเฉพาะตอนที่ URL ไม่ตรงกับเพลงปัจจุบัน
+    if (audio.src !== new URL(src, window.location.href).href) {
+        audio.src = src;
+    }
+
+    audio.volume = 0.35; // ตั้งความดัง 35%
+    audio.play().catch(() => {
+        console.log("ระบบเว็บบราว์เซอร์บล็อก Autoplay ไว้ ต้องให้ผู้ใช้คลิกอะไรสักอย่างในเว็บก่อนครับ");
+    });
+}
+
+function stopMusic() {
+    const audio = document.getElementById('bgMusic');
+    if(audio) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
+}
+
+function toggleMusic() {
+    musicEnabled = !musicEnabled;
+
+    if (musicEnabled) {
+        playMusic('menu');
+    } else {
+        stopMusic();
+    }
+}
 </script>
 </body>
 </html>
