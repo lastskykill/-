@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พิชิตชีวะขั้นเทพ - All-in-One</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap">
+
+    <style>
+        <div id="progressBar" class="fixed top-0 left-0 h-1 bg-green-400 z-[100] transition-all duration-150" style="width: 0%"></div>
+        body { font-family: 'Kanit', sans-serif; background-color: #0f172a; }
+
+        /* ✅ เอฟเฟกต์เวลาคลิกปุ่มทั่วไป */
+        button:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease-out;
+        }
+
+        /* ✅ เอฟเฟกต์ปุ่มกดพิเศษ (btn-feedback) */
+        .btn-feedback {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-feedback::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(191, 219, 254, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+            pointer-events: none;
+        }
+
+        /* ตอนกด: ยุบลง 0.95 (ผมแก้จาก 2 เป็น 0.95 เพื่อความสวยงามครับ) */
+        .btn-feedback:active {
+            transform: scale(0.95) !important;
+            filter: brightness(1.1);
+        }
+
+        .btn-feedback:active::after {
+            opacity: 1;
+            transition: opacity 0s;
+        }
+
+        /* เอฟเฟกต์ Glow เวลา Hover */
+        .btn-feedback:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* ✅ อนิเมชั่นตอนเปลี่ยนหน้า (Zoom-In) */
+        @keyframes zoomInPage {
+            from { opacity: 0; transform: scale(1.1); filter: blur(5px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        .page-transition {
+            animation: zoomInPage 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* ✅ อนิเมชั่นตัวหนังสือเรืองแสง */
+        .shimmer-text {
+            background: linear-gradient(90deg, #4ade80, #60a5fa, #4ade80);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+        /* ทำการเลื่อนหน้าจอให้นุ่มนวล */
+html { scroll-behavior: smooth; }
+
+/* ปุ่มย้อนกลับขึ้นบนแบบลอยตัว */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(59, 130, 246, 0.8);
+    backdrop-filter: blur(10px);
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: 0.3s;
+    z-index: 100;
+}
+.back-to-top:hover { transform: scale(1.1); background: #3b82f6; }
+/* แถบเลื่อนทั้งหมด */
+::-webkit-scrollbar {
+    width: 8px;
+}
+/* พื้นหลังแถบเลื่อน */
+::-webkit-scrollbar-track {
+    background: #0f172a; 
+}
+/* ตัวเลื่อน (หัวซิป) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #60a5fa; 
+}
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-black via-gray-900 to-black text-white min-h-screen">
+
+<audio id="bgMusic" loop preload="auto"></audio>
+
+<div id="startScreen" class="min-h-screen flex flex-col justify-center items-center text-center p-6">
+    <h1 class="text-5xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+        🧠 พิชิตชีวะขั้นเทพ
+    </h1>
+    <p class="text-gray-400 mb-8 text-lg">คลังข้อสอบชีวะ ม.ปลาย & สอวน.</p>
+
+    <div class="grid grid-cols-2 gap-4 w-full max-w-md">
+        <button onclick="chooseLevel('m4')" class="bg-blue-600 p-4 rounded-xl shadow-lg hover:scale-105 transition">ม.4</button>
+        <button onclick="chooseLevel('m5')" class="bg-purple-600 p-4 rounded-xl shadow-lg hover:scale-105 transition">ม.5</button>
+        <button onclick="chooseLevel('m6')" class="bg-red-600 p-4 rounded-xl shadow-lg hover:scale-105 transition">ม.6</button>
+        <button onclick="chooseLevel('posn')" class="bg-pink-600 p-4 rounded-xl shadow-lg hover:scale-105 transition italic font-bold">🔥 POSN ค่าย 1</button>
+        
+        <button onclick="chooseLevel('muscle')" class="bg-orange-500 hover:bg-orange-400 p-4 rounded-xl shadow-lg transition transform hover:scale-105 col-span-2 font-bold text-xl">
+            💪 ระบบกล้ามเนื้อ (15 ข้อ)
+        </button>
+        
+        <button onclick="chooseLevel('all')" class="bg-green-600 p-4 rounded-xl shadow-lg hover:scale-105 transition col-span-2">ข้อสอบรวมทุกระดับ</button>
+        <button onclick="chooseLevel('fast')" class="bg-yellow-500 p-4 rounded-xl shadow-lg hover:scale-105 transition col-span-2 font-bold text-black">⚡ FAST (สุ่ม 10 ข้อ)</button>
+        <button onclick="showLibrary()" class="bg-indigo-600 hover:bg-indigo-500 p-4 rounded-xl shadow-lg transition transform hover:scale-105 col-span-2 font-bold text-xl">
+            📖 คลังเนื้อหาบทเรียน
+        </button>
+    </div>
+</div>
+
+<div id="gameScreen" class="hidden max-w-2xl mx-auto p-6 pt-10">
+    <div class="flex justify-between items-center mb-8 bg-gray-800/50 p-4 rounded-2xl border border-gray-700 shadow-2xl">
+        <div id="timer" class="text-2xl font-mono text-yellow-400 font-bold">⏱️ 0s</div>
+        <div id="progressHeader" class="text-blue-400 font-semibold text-lg">ข้อที่ 1</div>
+        <button onclick="location.reload()" class="bg-red-500/20 text-red-400 px-4 py-1 rounded-lg border border-red-500/50 hover:bg-red-500 hover:text-white transition">ออก</button>
+    </div>
+    <div id="quizBox" class="space-y-4"></div>
+    <div id="resultBox" class="hidden space-y-4"></div>
+</div>
+
+<div id="libraryScreen" class="hidden max-w-2xl mx-auto p-6 pt-10">
+    <div class="flex justify-between items-center mb-8 bg-gray-800/80 p-5 rounded-2xl border border-indigo-500/30 shadow-2xl">
+        <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">📖 คลังสรุปบทเรียน</h2>
+        <button onclick="location.reload()" class="bg-gray-700/50 hover:bg-gray-700 px-4 py-2 rounded-xl text-sm transition">หน้าแรก</button>
+    </div>
+    
+    <div class="grid gap-4 mb-10">
+        <button onclick="showContent('m4_menu')" class="group relative bg-gray-800 p-5 rounded-2xl border border-blue-500/20 text-left hover:border-blue-500/50 transition-all btn-feedback">
+    <span class="text-xl mr-2">📘</span> <span class="font-bold text-blue-100">สรุปชีวะ ม.4 (เล่ม 1-2)</span>
+    <p class="text-xs text-gray-500 mt-1 ml-8">การศึกษาชีววิทยา, เคมีพื้นฐาน, เซลล์ ฯลฯ</p>
+</button>
+        <button onclick="showContent('m5_menu')" class="group relative bg-gray-800 p-5 rounded-2xl border border-blue-500/20 text-left hover:border-blue-500/50 transition-all btn-feedback">
+    <span class="text-xl mr-2">📘</span> <span class="font-bold text-blue-100">สรุปชีวะ ม.5 (เล่ม 3-4)</span>
+    <p class="text-xs text-gray-500 mt-1 ml-8">เรื่อง "พืช" ในเทอม 1 และ "ระบบร่างกายสัตว์และมนุษย์" ในเทอม 2</p>
+</button>
+        <button onclick="showContent('m6_menu')" class="group relative bg-gray-800 p-5 rounded-2xl border border-blue-500/20 text-left hover:border-blue-500/50 transition-all btn-feedback">
+    <span class="text-xl mr-2">📘</span> <span class="font-bold text-blue-100">สรุปชีวะ ม.6 (เล่ม 5-6)</span>
+    <p class="text-xs text-gray-500 mt-1 ml-8">เรื่องฮอร์โมน หรือการแบ่งเซลล์สืบพันธุ์ กับ "กลุ่มสิ่งมีชีวิตและสิ่งแวดล้อม"</p>
+</button>
+        <button onclick="showContent('animal')" class="group relative bg-gray-800 p-5 rounded-2xl border border-yellow-500/20 text-left hover:border-yellow-500/50 transition-all btn-feedback">
+            <span class="text-xl mr-2">🐾</span> <span class="font-bold text-yellow-100">อาณาจักรสัตว์ (ม.6/สอบเข้า)</span>
+            <p class="text-xs text-gray-500 mt-1 ml-8">Phylum ต่างๆ, เกณฑ์จำแนก, ข้อควรระวัง</p>
+        </button>
+
+        <button onclick="showContent('muscle')" class="group relative bg-gray-800 p-5 rounded-2xl border border-orange-500/20 text-left hover:border-orange-500/50 transition-all btn-feedback">
+            <span class="text-xl mr-2">💪</span> <span class="font-bold text-orange-100">ระบบกล้ามเนื้อและโครงกระดูก</span>
+            <p class="text-xs text-gray-500 mt-1 ml-8">กล้ามเนื้อลาย, เรียบ, หัวใจ และการทำงาน</p>
+        </button>
+
+        <button onclick="showContent('plant')" class="group relative bg-gray-800 p-5 rounded-2xl border border-green-500/20 text-left hover:border-green-500/50 transition-all btn-feedback">
+            <span class="text-xl mr-2">🌿</span> <span class="font-bold text-green-100">เนื้อเยื่อพืชและการลำเลียง</span>
+            <p class="text-xs text-gray-500 mt-1 ml-8">Xylem, Phloem และการทำงานของเซลล์พืช</p>
+        </button>
+    </div>
+
+    <div id="contentDisplay" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div class="p-8 bg-gray-900/90 rounded-3xl border-2 border-indigo-500/30 shadow-[0_0_50px_-12px_rgba(99,102,241,0.5)]">
+            <div id="contentText" class="prose prose-invert max-w-none"></div>
+            
+            <button onclick="document.getElementById('contentDisplay').classList.add('hidden')" class="mt-10 w-full py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-2xl text-sm font-bold transition">
+                🔼 ปิดเนื้อหา
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+// ================= DATA (ข้อสอบของคุณทั้งหมด) =================
+const m4=[{q:"เซลล์คืออะไร?",a:"หน่วยพื้นฐานของสิ่งมีชีวิต"},{q:"Mitochondria ทำหน้าที่?",a:"สร้างพลังงาน ATP"},{q:"DNA อยู่ที่ไหนในเซลล์สัตว์?",a:"Nucleus"},{q:"Osmosis คือ?",a:"การแพร่ของน้ำผ่านเยื่อเลือกผ่าน"},{q:"Diffusion คือ?",a:"การกระจายอนุภาคจากมากไปน้อย"},{q:"ATP คือ?",a:"สารพลังงานสูงของเซลล์"},{q:"Neuron คือ?",a:"เซลล์ประสาท"},{q:"Alveoli คือ?",a:"ถุงลมปอด"},{q:"Hemoglobin ทำหน้าที่?",a:"ลำเลียงออกซิเจน"},{q:"Enzyme คือ?",a:"ตัวเร่งปฏิกิริยาชีวเคมี"},{q:"Cell membrane?",a:"ควบคุมการเข้าออกของสาร"},{q:"Ribosome?",a:"สังเคราะห์โปรตีน"},{q:"Lysosome?",a:"ย่อยออร์แกเนลล์ที่เสื่อมสภาพ"},{q:"Cytoplasm?",a:"ของเหลวและออร์แกเนลล์ในเซลล์"},{q:"Organ คือ?",a:"อวัยวะ"},{q:"Tissue?",a:"เนื้อเยื่อ"},{q:"Organ system?",a:"ระบบอวัยวะ"},{q:"Respiration?",a:"การหายใจระดับเซลล์"},{q:"Circulation?",a:"การไหลเวียนเลือด"},{q:"Excretion?",a:"การขับถ่ายของเสีย"},{q:"Kidney?",a:"กรองของเสียจากเลือด"},{q:"Liver?",a:"กำจัดสารพิษและสร้างน้ำดี"},{q:"Skin?",a:"ป้องกันและรับความรู้สึก"},{q:"Bone?",a:"โครงร่างและสะสมแคลเซียม"},{q:"Muscle?",a:"การเคลื่อนที่และคงรูปร่าง"},{q:"Brain?",a:"ควบคุมและประสานงาน"},{q:"Heart?",a:"สูบฉีดเลือด"},{q:"Lung?",a:"แลกเปลี่ยนแก๊ส"},{q:"Oxygen?",a:"ตัวรับอิเล็กตรอนตัวสุดท้าย"},{q:"Glucose?",a:"น้ำตาลโมเลกุลเดี่ยว"}];
+const m5=[{q:"Mitosis คือ?",a:"การแบ่งนิวเคลียสเพื่อเพิ่มจำนวนเซลล์ร่างกาย"},{q:"Gene คือ?",a:"ลำดับ DNA ที่ควบคุมลักษณะทางพันธุกรรม"},{q:"Phenotype?",a:"ลักษณะที่ปรากฏออกมา"},{q:"Genotype?",a:"รูปแบบของยีน"},{q:"Immune system?",a:"ระบบภูมิคุ้มกัน"},{q:"Bacteria จัดเป็นสิ่งมีชีวิตกลุ่มใด?",a:"Prokaryote"},{q:"Virus?",a:"อนุภาคที่ไม่มีโครงสร้างเซลล์"},{q:"Glycolysis เกิดขึ้นที่ไหน?",a:"Cytosol"},{q:"Aerobic respiration?",a:"การหายใจแบบใช้ออกซิเจน"},{q:"Anaerobic respiration?",a:"การหายใจแบบไม่ใช้ออกซิเจน"},{q:"Homeostasis?",a:"การรักษาดุลยภาพของร่างกาย"},{q:"Negative feedback?",a:"การยับยั้งย้อนกลับเพื่อเข้าสู่สมดุล"},{q:"Positive feedback?",a:"การกระตุ้นให้เกิดปฏิกิริยามากขึ้น"},{q:"Mutation?",a:"การกลายพันธุ์"},{q:"DNA replication?",a:"การจำลองตัวเองของ DNA"},{q:"Transcription?",a:"การสร้าง RNA จากแม่แบบ DNA"},{q:"Translation?",a:"การสังเคราะห์โปรตีนจาก mRNA"},{q:"Protein ประกอบด้วยหน่วยย่อยคือ?",a:"Amino acid"},{q:"Lipid คือ?",a:"ไขมันและน้ำมัน"},{q:"Carbohydrate คือ?",a:"แป้งและน้ำตาล"},{q:"Enzyme specificity?",a:"ความจำเพาะของเอนไซม์"},{q:"Lock and key model?",a:"ทฤษฎีแม่กุญแจกับลูกกุญแจ"},{q:"Antibody?",a:"โปรตีนที่สร้างมาต่อต้านสิ่งแปลกปลอม"},{q:"Antigen?",a:"สิ่งแปลกปลอมที่กระตุ้นภูมิคุ้มกัน"},{q:"Vaccine?",a:"เชื้อโรคที่อ่อนกำลังเพื่อกระตุ้นภูมิ"},{q:"Cell cycle?",a:"วงจรเซลล์"},{q:"Chromosome?",a:"โครงสร้างที่เก็บ DNA"},{q:"Meiosis?",a:"การแบ่งเซลล์เพื่อสร้างเซลล์สืบพันธุ์"},{q:"Gamete?",a:"เซลล์สืบพันธุ์"},{q:"Fertilization?",a:"การปฏิสนธิ"}];
+const m6=[{q:"Stroke คือ?",a:"โรคหลอดเลือดสมอง"},{q:"Hypertension?",a:"โรคความดันโลหิตสูง"},{q:"Diabetes mellitus?",a:"โรคเบาหวาน"},{q:"Heart attack?",a:"ภาวะกล้ามเนื้อหัวใจขาดเลือด"},{q:"Anemia?",a:"ภาวะโลหิตจาง"},{q:"Dialysis?",a:"การฟอกไต"},{q:"Cancer?",a:"เซลล์แบ่งตัวผิดปกติอย่างรวดเร็ว"},{q:"Tumor?",a:"เนื้องอก"},{q:"Antibiotic?",a:"ยาปฏิชีวนะใช้ฆ่าแบคทีเรีย"},{q:"Fever?",a:"ภาวะตัวร้อนจากการติดเชื้อ"},{q:"Insulin?",a:"ฮอร์โมนลดระดับน้ำตาลในเลือด"},{q:"Glucagon?",a:"ฮอร์โมนเพิ่มระดับน้ำตาลในเลือด"},{q:"Neuron damage?",a:"การเสียหายของเซลล์ประสาท"},{q:"Lung disease?",a:"โรคเกี่ยวกับปอด"},{q:"Kidney failure?",a:"ภาวะไตวาย"},{q:"Liver cirrhosis?",a:"โรคตับแข็ง"},{q:"Infection?",a:"การติดเชื้อ"},{q:"Inflammation?",a:"การอักเสบ"},{q:"Immune response?",a:"การตอบสนองทางภูมิคุ้มกัน"},{q:"Hormone?",a:"สารส่งสัญญาณทางเคมีในเลือด"},{q:"Endocrine system?",a:"ระบบต่อมไร้ท่อ"},{q:"Nervous system?",a:"ระบบประสาท"},{q:"Reflex action?",a:"การตอบสนองนอกอำนาจจิตใจ"},{q:"Spinal cord?",a:"ไขสันหลัง"},{q:"Brain stem?",a:"ก้านสมอง"},{q:"Cerebrum?",a:"สมองส่วนหน้าควบคุมความรู้สึกนึกคิด"},{q:"Cerebellum?",a:"สมองส่วนหลังควบคุมการทรงตัว"},{q:"Pituitary gland?",a:"ต่อมใต้สมอง"},{q:"Thyroid gland?",a:"ต่อมไทรอยด์"},{q:"Adrenal gland?",a:"ต่อมหมวกไต"}];
+const muscleQuiz = [{q: "กล้ามเนื้อชนิดใดทำงานอยู่นอกอำนาจจิตใจ พบที่ผนังลำไส้และหลอดเลือด", a: "กล้ามเนื้อเรียบ"},{q: "โครงสร้างใดทำหน้าที่ยึดระหว่างกล้ามเนื้อกับกระดูก", a: "เอ็นกล้ามเนื้อ (Tendon)"},{q: "กล้ามเนื้อหัวใจมีลักษณะใดที่เหมือนกับกล้ามเนื้อโครงร่าง", a: "มีลักษณะเป็นลาย (Striated)"},{q: "หน่วยที่เล็กที่สุดของการหดตัวในกล้ามเนื้อลายซึ่งอยู่ระหว่าง Z-line", a: "ซาร์โคเมียร์ (Sarcomere)"},{q: "โปรตีนชนิดใดที่มีบทบาทเป็นเส้นใยหนา (Thick filament) ในกล้ามเนื้อ", a: "ไมโอซิน (Myosin)"},{q: "กล้ามเนื้อแบบหดตัวช้า (Type I) เหมาะกับกิจกรรมใดมากที่สุด", a: "การวิ่งมาราธอน"},{q: "โครงสร้างพิเศษที่เรียกว่า Intercalated disc พบได้ในกล้ามเนื้อชนิดใด", a: "กล้ามเนื้อหัวใจ"},{q: "สารสื่อประสาทหลักที่กระตุ้นให้กล้ามเนื้อโครงร่างเกิดการหดตัว", a: "อะซิทิลโคลีน (Acetylcholine)"},{q: "แร่ธาตุใดจำเป็นในการปลดล็อกเพื่อให้โปรตีนกล้ามเนื้อหดตัวได้", a: "แคลเซียม"},{q: "การที่กล้ามเนื้อใหญ่ขึ้นจากการออกกำลังกาย (Hypertrophy) เกิดจากอะไร", a: "ขนาดของเซลล์กล้ามเนื้อเดิมโตขึ้น"},{q: "พลังงานเคมีในรูปแบบใดที่กล้ามเนื้อนำมาใช้หดตัวโดยตรง", a: "เอทีพี (ATP)"},{q: "การหดตัวของกล้ามเนื้อที่เกิดแรงแต่ไม่มีการเปลี่ยนความยาวเรียกว่าอะไร", a: "Isometric contraction"},{q: "ใยกล้ามเนื้อแบบหดตัวเร็ว (Type II) มักจะมีสีขาวเพราะเหตุใด", a: "มีไมโอโกลบินน้อย"},{q: "กระบวนการ Peristalsis ในทางเดินอาหารเป็นการทำงานของกล้ามเนื้อใด", a: "กล้ามเนื้อเรียบ"},{q: "หน้าที่ของกล้ามเนื้อนอกเหนือจากการเคลื่อนไหวคือข้อใด", a: "สร้างความร้อนรักษาอุณหภูมิร่างกาย"}];
+const posnBioQuestions = [{q: "ออร์แกเนลล์ใดทำหน้าที่ย่อยสิ่งแปลกปลอมและออร์แกเนลล์ที่หมดอายุ", a: "Lysosome"},{q: "โครงสร้างใดในพืชที่ทำหน้าที่เชื่อมต่อไซโทพลาซึมระหว่างเซลล์", a: "Plasmodesmata"},{q: "Fluid Mosaic Model อธิบายโครงสร้างของอะไร", a: "Cell membrane"},{q: "โปรตีนชนิดใดเป็นองค์ประกอบหลักของ Microtubule", a: "Tubulin"},{q: "การลำเลียงสารแบบใดที่ใช้พลังงาน ATP และโปรตีนตัวพา", a: "Active transport"},{q: "ในเซลล์พืช ออร์แกเนลล์ใดเก็บสะสมสารสี Anthocyanin", a: "Central Vacuole"},{q: "ออร์แกเนลล์ที่มีเยื่อหุ้มชั้นเดียวและเกี่ยวข้องกับ Photorespiration", a: "Peroxisome"},{q: "Smooth ER ทำหน้าที่หลักในการสังเคราะห์สารกลุ่มใด", a: "Lipid และ Steroid"},{q: "Nucleolus ทำหน้าที่หลักในการสร้างอะไร", a: "Ribosome subunits (rRNA)"},{q: "เซลล์ประเภทใดที่มี Mitochondria หนาแน่นที่สุด", a: "เซลล์กล้ามเนื้อหัวใจ"},{q: "Glycolysis เกิดขึ้นที่บริเวณใดของเซลล์", a: "Cytosol"},{q: "ตัวรับอิเล็กตรอนตัวสุดท้ายในกระบวนการหายใจแบบใช้ออกซิเจน", a: "Oxygen ($O_2$)"},{q: "ในภาวะขาดออกซิเจน เซลล์กล้ามเนื้อโครงร่างจะผลิตสารใด", a: "Lactic acid"},{q: "Light reaction เกิดขึ้นที่บริเวณใดของ Chloroplast", a: "Thylakoid membrane"},{q: "เอนไซม์ที่ทำหน้าที่ตรึง $CO_2$ ตัวแรกในพืช C3", a: "Rubisco"},{q: "สารตัวแรกที่เสถียรของพืช C4 คืออะไร", a: "Oxaloacetate (OAA)"},{q: "ตัวรับอิเล็กตรอนตัวสุดท้ายใน Light reaction คืออะไร", a: "NADP+"},{q: "กระบวนการสร้าง ATP โดยอาศัยความต่างศักย์ของโปรตอนผ่าน ATP Synthase", a: "Chemiosmosis"},{q: "พืชกลุ่มใดตรึง $CO_2$ ตอนกลางคืนและสังเคราะห์แสงตอนกลางวัน", a: "CAM plants"},{q: "FADH2 1 โมเลกุล ให้พลังงานประมาณกี่ ATP ในระบบ ETC", a: "1.5 - 2 ATP"},{q: "พันธะที่เชื่อมระหว่างนิวคลีโอไทด์ภายในสาย DNA เดียวกัน", a: "Phosphodiester bond"},{q: "เบสคู่สมของ Adenine (A) ในสาย RNA คือเบสชนิดใด", a: "Uracil (U)"},{q: "กระบวนการคัดลอกรหัสพันธุกรรมจาก DNA เป็น mRNA", a: "Transcription"},{q: "Codon เริ่มต้น (Start codon) บน mRNA คือรหัสใด", a: "AUG"},{q: "กฎข้อที่ 1 ของเมนเดล (Law of Segregation) กล่าวถึงอะไร", a: "Alleles"},{q: "หมู่เลือดระบบ ABO เป็นตัวอย่างของพันธุกรรมแบบใด", a: "Multiple alleles และ Codominance"},{q: "โรคธาลัสซีเมียถ่ายทอดทางพันธุกรรมผ่านโครโมโซมชนิดใด", a: "Autosome recessive"},{q: "เอนไซม์ที่ใช้ตัดสาย DNA ในตำแหน่งลำดับเบสจำเพาะ", a: "Restriction enzyme"},{q: "เทคนิคที่ใช้เพิ่มจำนวนชิ้นส่วน DNA ในหลอดทดลอง", a: "PCR"},{q: "กลุ่มอาการดาวน์ เกิดจากความผิดปกติของโครโมโซมคู่ที่เท่าใด", a: "คู่ที่ 21 เกินมา 1 แท่ง"},{q: "ระยะใดของการแบ่งเซลล์ที่โครโมโซมเรียงตัวตรงกลางเซลล์ชัดเจน", a: "Metaphase"},{q: "ระยะใดที่เกิดการแยกของ Sister chromatids ในไมโทซิส", a: "Anaphase"},{q: "Crossing over เกิดขึ้นในระยะใดของไมโอซิส", a: "Prophase I"},{q: "การแบ่งเซลล์ที่ทำให้ได้เซลล์ลูกที่มีโครโมโซมลดลงครึ่งหนึ่ง", a: "Meiosis"},{q: "โครงสร้างที่เป็นจุดเชื่อมโครมาทิดสองแท่งเข้าด้วยกัน", a: "Centromere"},{q: "ใครได้รับยกย่องว่าเป็นบิดาแห่งวิชาอนุกรมวิธาน", a: "Carolus Linnaeus"},{q: "ผนังเซลล์ของเห็ดรา (Fungi) มีสารใดเป็นองค์ประกอบหลัก", a: "Chitin"},{q: "สิ่งมีชีวิตกลุ่มแรกที่ผลิต $O_2$ สู่ชั้นบรรยากาศโลก", a: "Cyanobacteria"},{q: "สัตว์ในไฟลัมใดมีลักษณะลำตัวเป็นปล้องและรยางค์ต่อกันเป็นข้อ", a: "Arthropoda"},{q: "โครงสร้างที่มีต้นกำเนิดวิวัฒนาการเดียวกันแต่หน้าที่ต่างกัน", a: "Homologous structure"},{q: "เนื้อเยื่อพืชชนิดใดทำหน้าที่ลำเลียงน้ำและแร่ธาตุ", a: "Xylem"},{q: "เซลล์ใน Phloem ที่ไม่มีนิวเคลียสเมื่อโตเต็มที่", a: "Sieve tube member"},{q: "ชั้นเนื้อเยื่อรากที่มีแผ่น Casparian strip", a: "Endodermis"},{q: "ฮอร์โมนพืชที่มีสถานะเป็นก๊าซ กระตุ้นการสุกของผลไม้", a: "Ethylene"},{q: "การตอบสนองของพืชที่เจริญเข้าหาหรือออกจากแสง", a: "Phototropism"},{q: "เอนไซม์ในน้ำลายที่ทำหน้าที่ย่อยแป้งตัวแรกคืออะไร", a: "Salivary amylase"},{q: "หน่วยทำงานที่เล็กที่สุดของไตในการกรองเลือดเรียกว่าอะไร", a: "Nephron"},{q: "ฮอร์โมนจากตับอ่อนที่ทำหน้าที่เพิ่มระดับน้ำตาลในเลือด", a: "Glucagon"},{q: "เส้นประสาทสมองคู่ที่ 2 (Optic nerve) ทำหน้าที่อะไร", a: "การมองเห็น"},{q: "เซลล์เม็ดเลือดขาวชนิดใดทำหน้าที่สร้าง Antibody โดยตรง", a: "Plasma cell (B-cell)"}];
+
+// ================= QUIZ ENGINE =================
+let current = [], index = 0, answers = [], time = 0, timer;
+
+function getAll() { return [...m4, ...m5, ...m6, ...posnBioQuestions, ...muscleQuiz]; }
+function shuffle(a) { return a.sort(() => Math.random() - 0.5); }
+
+function genOpt(correct) {
+    let pool = [...new Set(getAll().map(x => x.a).filter(x => x !== correct))];
+    return shuffle([correct, ...shuffle(pool).slice(0, 3)]);
+}
+
+function chooseLevel(type) {
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('gameScreen').classList.remove('hidden');
+    if (type === 'm4') current = [...m4];
+    else if (type === 'm5') current = [...m5];
+    else if (type === 'm6') current = [...m6];
+    else if (type === 'posn') current = [...posnBioQuestions];
+    else if (type === 'muscle') current = [...muscleQuiz];
+    else if (type === 'all') current = getAll();
+    else if (type === 'fast') current = shuffle(getAll()).slice(0, 10);
+    current = shuffle(current).map(q => ({...q, options: genOpt(q.a)}));
+    index = 0; answers = []; time = 0;
+    clearInterval(timer);
+    timer = setInterval(() => { time++; document.getElementById('timer').innerText = "⏱️ "+time+"s"; }, 1000);
+    render();
+}
+
+function render() {
+    let q = current[index];
+    document.getElementById('progressHeader').innerText = `ข้อที่ ${index + 1}/${current.length}`;
+    let html = `<div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl">
+                <h2 class="text-2xl font-semibold mb-6 text-green-300">${q.q}</h2><div class="grid gap-3">`;
+    q.options.forEach((o, i) => {
+    // เพิ่ม Class 'btn-feedback' และ 'transition-all' เข้าไป
+    html += `<button onclick="checkAns(${i}, this)" 
+            class="block w-full p-4 text-left bg-gray-700 hover:bg-gray-600 rounded-xl border border-gray-600 transition-all duration-150 btn-feedback">
+            ${o}</button>`;
+});
+    document.getElementById('quizBox').innerHTML = html + `</div></div>`;
+}
+
+function checkAns(optIndex, btn) {
+    let q = current[index];
+    let selectedText = q.options[optIndex];
+    let isCorrect = selectedText === q.a;
+    answers.push({...q, selected: selectedText, isCorrect});
+    
+    setTimeout(() => { index++; index >= current.length ? finish() : render(); }, 300); // ปรับเวลาให้เร็วขึ้นเป็น 300ms ก็ได้ครับ
+}
+
+function finish() {
+    clearInterval(timer);
+    document.getElementById('quizBox').innerHTML = "";
+    let score = answers.filter(a => a.isCorrect).length;
+    let html = `<div class="text-center p-8 bg-gray-800 rounded-3xl border border-blue-500 mb-6 shadow-2xl">
+                <h2 class="text-4xl font-bold text-yellow-400 mb-2">สรุปคะแนน</h2>
+                <div class="text-6xl font-black mb-4">${score}/${answers.length}</div>
+                <p class="text-gray-400">เวลาที่ใช้: ${time} วินาที</p>
+                <button onclick="location.reload()" class="mt-6 bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-full font-bold transition">เล่นใหม่อีกครั้ง</button></div>`;
+    answers.forEach((a, i) => {
+        html += `<div class="p-4 rounded-xl border mb-3 ${a.isCorrect ? 'bg-green-900/20 border-green-800' : 'bg-red-900/20 border-red-800'}">
+                <div class="flex justify-between font-semibold"><span>${i+1}. ${a.q}</span><span>${a.isCorrect?'✅':'❌'}</span></div>
+                <p class="text-sm mt-1">เฉลย: <span class="text-green-400">${a.a}</span></p>
+                ${!a.isCorrect ? `<p class="text-sm">คุณตอบ: <span class="text-red-400">${a.selected}</span></p>` : ''}
+                </div>`;
+    });
+    document.getElementById('resultBox').innerHTML = html;
+    document.getElementById('resultBox').classList.remove('hidden');
+}
+
+// ================= LIBRARY CONTENT (เนื้อหาเน้นๆ) =================
+const biologyNotes = {
+    m4_menu: `
+        <div class="space-y-6 text-gray-200">
+            <h3 class="text-3xl font-black text-blue-400 border-b-2 border-blue-500 pb-2">📘 เลือกเทอม (ชั้น ม.4)</h3>
+            
+            <div class="grid gap-4 mt-4">
+                <button onclick="showContent('m4_term1')" class="bg-blue-900/30 hover:bg-blue-800/60 p-6 rounded-2xl border border-blue-500/50 transition-all text-left btn-feedback">
+                    <div class="font-bold text-xl text-blue-200 mb-1">ภาคเรียนที่ 1 (เล่ม 1) 🧬</div>
+                    <p class="text-sm font-normal text-gray-400">บทที่ 1-3: ธรรมชาติสิ่งมีชีวิต, เคมีพื้นฐาน, เซลล์</p>
+                </button>
+
+                <button onclick="showContent('m4_term2')" class="bg-purple-900/30 hover:bg-purple-800/60 p-6 rounded-2xl border border-purple-500/50 transition-all text-left btn-feedback">
+    <div class="font-bold text-xl text-purple-200 mb-1">ภาคเรียนที่ 2 (เล่ม 2) 🧬</div>
+    <p class="text-sm font-normal text-gray-400">บทที่ 4-7: พันธุศาสตร์, DNA, เทคโนโลยีชีวภาพ และวิวัฒนาการ</p>
+</button>
+            </div>
+
+            <button onclick="document.getElementById('libraryScreen').classList.add('hidden'); chooseLevel('m4')" 
+                class="w-full py-4 mt-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl font-black text-white shadow-xl hover:scale-105 transition btn-feedback">
+                🚀 ข้ามไปทำแบบทดสอบ ม.4 รวม (30 ข้อ)
+            </button>
+        </div>
+    `,
+
+    m4_term1: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
+            <button onclick="showContent('m4_menu')" class="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center mb-2 transition">
+                ◀ ย้อนกลับไปเลือกเทอม
+            </button>
+            
+            <h3 class="text-3xl font-black text-blue-300 border-b-2 border-blue-500 pb-2">🧬 สรุปชีวะ ม.4 เทอม 1</h3>
+            
+            <section class="space-y-3">
+                <h4 class="text-lg font-bold text-blue-200 bg-blue-900/40 p-2 rounded-lg pl-4 border-l-4 border-blue-400">บทที่ 1: การศึกษาชีววิทยา</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <div>
+                        <b class="text-white">1. ธรรมชาติของสิ่งมีชีวิต (ต้องมี 5 ประการ):</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>สืบพันธุ์:</b> ดำรงเผ่าพันธุ์ (อาศัยเพศ / ไม่อาศัยเพศ เช่น ดาวทะเลงอกใหม่)</li>
+                            <li><b>เจริญเติบโต:</b> เพิ่มเซลล์ ขนาด เปลี่ยนรูปร่าง (ลูกอ๊อด → กบ)</li>
+                            <li><b>ตอบสนองต่อสิ่งเร้า:</b> พืชเอนหาแสง สัตว์หลบหลีกศัตรู</li>
+                            <li><b>รักษาดุลยภาพ (Homeostasis):</b> ควบคุมสภาวะภายใน เช่น พารามีเซียมขับน้ำ</li>
+                            <li><b>การจัดระบบ:</b> เซลล์ → เนื้อเยื่อ → อวัยวะ → ระบบอวัยวะ → ร่างกาย</li>
+                        </ul>
+                    </div>
+                    <p><b class="text-white">2. ชีววิทยากับชีวจริยธรรม:</b> การทดลองอย่างมีจรรยาบรรณ (สัตว์ทดลอง, โคลนนิ่งมนุษย์, อาหาร GMOs)</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-blue-200 bg-blue-900/40 p-2 rounded-lg pl-4 border-l-4 border-blue-400">บทที่ 2: เคมีที่เป็นพื้นฐานของสิ่งมีชีวิต</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">1. น้ำ:</b> สารอนินทรีย์ที่มีมากสุด ตัวทำละลายที่ดีเยี่ยม ช่วยคุมอุณหภูมิได้ดี (ความจุความร้อนสูง)</p>
+                    <div>
+                        <b class="text-white">2. สารชีวโมเลกุล:</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>คาร์โบไฮเดรต:</b> พลังงานหลัก (Glucose, Sucrose, Starch, Glycogen, Cellulose)</li>
+                            <li><b>โปรตีน:</b> กรดอะมิโนต่อกันด้วยพันธะเพปไทด์ (เอนไซม์, โครงสร้าง, ภูมิคุ้มกัน)</li>
+                            <li><b>ลิพิด:</b> ไขมัน/น้ำมัน (Triglyceride), ฟอสโฟลิพิด (เยื่อหุ้มเซลล์), สเตียรอยด์</li>
+                            <li><b>กรดนิวคลิอิก:</b> DNA และ RNA (ถ่ายทอดข้อมูลพันธุกรรม)</li>
+                        </ul>
+                    </div>
+                    <p><b class="text-white">3. เอนไซม์:</b> ตัวเร่งปฏิกิริยา ช่วยลดพลังงานกระตุ้น (E<sub>a</sub>) ให้ปฏิกิริยาเกิดเร็วขึ้น</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-blue-200 bg-blue-900/40 p-2 rounded-lg pl-4 border-l-4 border-blue-400">บทที่ 3: เซลล์และการทำงานของเซลล์</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <div>
+                        <b class="text-white">1. โครงสร้างเซลล์:</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>เยื่อหุ้มเซลล์:</b> Fluid Mosaic Model ควบคุมสารเข้าออก</li>
+                            <li><b>Nucleus:</b> ศูนย์ควบคุมและเก็บ DNA</li>
+                            <li><b>Mitochondria:</b> แหล่งสร้างพลังงาน (ATP)</li>
+                            <li><b>Chloroplast:</b> สังเคราะห์ด้วยแสง (เฉพาะพืช)</li>
+                            <li><b>Ribosome:</b> สังเคราะห์โปรตีน</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <b class="text-white">2. การลำเลียงสาร:</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>ไม่ใช้พลังงาน (Passive):</b> Diffusion, Facilitated, Osmosis</li>
+                            <li><b>ใช้พลังงาน (Active):</b> จากน้อย → มาก (ต้องใช้ ATP)</li>
+                        </ul>
+                    </div>
+                    <p><b class="text-white">3. การหายใจระดับเซลล์:</b> Glycolysis → Acetyl CoA → วัฏจักรเครบส์ → ถ่ายทอดอิเล็กตรอน</p>
+                    <div>
+                        <b class="text-white">4. การแบ่งเซลล์:</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>Mitosis:</b> เซลล์ร่างกาย (ได้ 2 เซลล์ โครโมโซมเท่าเดิม)</li>
+                            <li><b>Meiosis:</b> เซลล์สืบพันธุ์ (ได้ 4 เซลล์ โครโมโซมลดครึ่งหนึ่ง)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div class="mt-8">
+                <a href="https://learn.genetics.utah.edu/content/cells/insideacell/" target="_blank" class="block w-full py-5 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl font-black text-white text-center shadow-xl hover:scale-105 transition-all no-underline">🔬 ส่องโลกภายในเซลล์ (Cell Virtual Tour) ↗️</a>
+            </div>
+        </div>
+    `,
+
+    m4_term2: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
+            <button onclick="showContent('m4_menu')" class="text-purple-400 hover:text-purple-300 text-sm font-bold flex items-center mb-2 transition">
+                ◀ ย้อนกลับไปเลือกเทอม
+            </button>
+            
+            <h3 class="text-3xl font-black text-purple-300 border-b-2 border-purple-500 pb-2">🧬 สรุปชีวะ ม.4 เทอม 2</h3>
+            
+            <section class="space-y-3">
+                <h4 class="text-lg font-bold text-purple-200 bg-purple-900/40 p-2 rounded-lg pl-4 border-l-4 border-purple-400">บทที่ 4: โครโมโซมและสารพันธุกรรม</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">1. โครโมโซม:</b> DNA พันรอบโปรตีน Histone → Nucleosome → ขดตัวเป็นโครมาทิน → แท่งโครโมโซม</p>
+                    <p><b class="text-white">2. Karyotype:</b> การจัดเรียงโครโมโซมตามขนาดและเซนโทรเมียร์ (มนุษย์ปกติมี 46 แท่ง หรือ 23 คู่)</p>
+                    <p><b class="text-white">3. การค้นพบ:</b> Griffith (พบสารเปลี่ยนพันธุกรรมแบคทีเรีย) และ Avery (พิสูจน์ว่าสารนั้นคือ DNA ไม่ใช่โปรตีน)</p>
+                    <p><b class="text-white">4. โครงสร้างและการจำลอง DNA:</b> เกลียวคู่ (Double Helix) และจำลองตัวเอง (DNA Replication)</p>
+                    <p><b class="text-white">5. มิวเทชัน (Mutation):</b> การเปลี่ยนแปลงระดับยีนและระดับโครโมโซมที่ส่งผลต่อลักษณะสิ่งมีชีวิต</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-purple-200 bg-purple-900/40 p-2 rounded-lg pl-4 border-l-4 border-purple-400">บทที่ 5: การถ่ายทอดลักษณะทางพันธุกรรม</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <div>
+                        <b class="text-white">1. กฎของเมนเดล:</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>กฎแห่งการแยก:</b> ยีนที่อยู่เป็นคู่จะแยกจากกันไปสู่เซลล์สืบพันธุ์</li>
+                            <li><b>กฎแห่งการรวมกลุ่มอย่างอิสระ:</b> ยีนของลักษณะต่างๆ จะรวมกลุ่มกันอย่างอิสระ</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <b class="text-white">2. นอกเหนือกฎของเมนเดล:</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>Incomplete Dominance:</b> เด่นไม่สมบูรณ์ (เช่น ดอกบานเย็นสีชมพู)</li>
+                            <li><b>Codominance:</b> เด่นร่วม (เช่น หมู่เลือด AB)</li>
+                            <li><b>Multiple Alleles:</b> (เช่น ระบบหมู่เลือด ABO)</li>
+                            <li><b>Sex-linked traits:</b> ยีนบนโครโมโซมเพศ (เช่น ตาบอดสี, ฮีโมฟีเลีย)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-purple-200 bg-purple-900/40 p-2 rounded-lg pl-4 border-l-4 border-purple-400">บทที่ 6: เทคโนโลยีทางดีเอ็นเอ</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">1. การโคลนยีน & PCR:</b> ใช้พลาสมิดแบคทีเรียและเทคนิค PCR เพื่อเพิ่มจำนวน DNA ในหลอดทดลอง</p>
+                    <div>
+                        <b class="text-white">2. การประยุกต์ใช้:</b>
+                        <ul class="list-disc ml-5 mt-1 text-gray-400 space-y-1">
+                            <li><b>การแพทย์:</b> ตรวจวินิจฉัยโรค, ผลิตยาและวัคซีน</li>
+                            <li><b>นิติวิทยาศาสตร์:</b> ตรวจลายพิมพ์ DNA (DNA Fingerprinting)</li>
+                            <li><b>การเกษตร:</b> สร้างพืชดัดแปรพันธุกรรม (GMOs)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-purple-200 bg-purple-900/40 p-2 rounded-lg pl-4 border-l-4 border-purple-400">บทที่ 7: วิวัฒนาการ</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">1. หลักฐานวิวัฒนาการ:</b> ซากดึกดำบรรพ์, กายวิภาคเปรียบเทียบ, และชีววิทยาโมเลกุล</p>
+                    <p><b class="text-white">2. แนวคิดของดาร์วิน:</b> การคัดเลือกโดยธรรมชาติ (Natural Selection) ผู้ที่เหมาะสมที่สุดจะอยู่รอด</p>
+                    <p><b class="text-white">3. พันธุศาสตร์ประชากร:</b> ใช้กฎของ Hardy-Weinberg ($p^2 + 2pq + q^2 = 1$ และ $p + q = 1$) คำนวณความถี่แอลลีล</p>
+                    <p><b class="text-white">4. สปีชีส์ใหม่:</b> กลไกการแยกกันทางการสืบพันธุ์ที่ทำให้เกิดสิ่งมีชีวิตชนิดใหม่</p>
+                </div>
+            </section>
+            <div class="mt-8">
+                <a href="https://dnalc.cshl.edu/resources/3d/07-how-dna-is-packaged-basic.html" target="_blank" class="block w-full py-5 bg-gradient-to-r from-purple-600 to-pink-700 rounded-2xl font-black text-white text-center shadow-xl hover:scale-105 transition-all no-underline">🧬 ดูโครงสร้าง DNA แบบ 3D ↗️</a>
+            </div>
+        </div>
+    `,
+m5_menu: `
+        <div class="space-y-6 text-gray-200">
+            <h3 class="text-3xl font-black text-green-400 border-b-2 border-green-500 pb-2">🌿 เลือกเทอม (ชั้น ม.5)</h3>
+            
+            <div class="grid gap-4 mt-4">
+                <button onclick="showContent('m5_term1')" class="bg-green-900/30 hover:bg-green-800/60 p-6 rounded-2xl border border-green-500/50 transition-all text-left btn-feedback">
+                    <div class="font-bold text-xl text-green-200 mb-1">ภาคเรียนที่ 1 (เล่ม 3) 🌳</div>
+                    <p class="text-sm font-normal text-gray-400">เน้นเรื่อง "พืช": โครงสร้าง, การสืบพันธุ์, การลำเลียง และการสังเคราะห์ด้วยแสง</p>
+                </button>
+
+                <button onclick="showContent('m5_term2')" class="bg-orange-900/30 hover:bg-orange-800/60 p-6 rounded-2xl border border-orange-500/50 transition-all text-left btn-feedback">
+                    <div class="font-bold text-xl text-orange-200 mb-1">ภาคเรียนที่ 2 (เล่ม 4) 🫀</div>
+                    <p class="text-sm font-normal text-gray-400">เน้นเรื่อง "สัตว์และมนุษย์": ระบบย่อย, หายใจ, หมุนเวียนเลือด และภูมิคุ้มกัน</p>
+                </button>
+            </div>
+
+            <button onclick="document.getElementById('libraryScreen').classList.add('hidden'); chooseLevel('m5')" 
+                class="w-full py-4 mt-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl font-black text-white shadow-xl hover:scale-105 transition btn-feedback">
+                🚀 ข้ามไปทำแบบทดสอบ ม.5 รวม (30 ข้อ)
+            </button>
+        </div>
+    `,
+    m5_term1: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
+            <button onclick="showContent('m5_menu')" class="text-green-400 hover:text-green-300 text-sm font-bold flex items-center mb-2 transition">
+                ◀ ย้อนกลับไปเลือกเทอม
+            </button>
+            
+            <h3 class="text-3xl font-black text-green-300 border-b-2 border-green-500 pb-2">🌳 สรุปชีวะ ม.5 เทอม 1 (พืช)</h3>
+            
+            <section class="space-y-3">
+                <h4 class="text-lg font-bold text-green-200 bg-green-900/40 p-2 rounded-lg pl-4 border-l-4 border-green-400">บทที่ 8-9: โครงสร้างและการเจริญเติบโตของพืชดอก</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● เนื้อเยื่อพืช:</b> แบ่งเป็น <b>เนื้อเยื่อเจริญ (Meristem)</b> ที่แบ่งเซลล์ตลอดเวลา และ <b>เนื้อเยื่อถาวร</b> (เช่น Xylem ลำเลียงน้ำ, Phloem ลำเลียงอาหาร)</p>
+                    <p><b class="text-white">● โครงสร้างราก/ลำต้น:</b> ข้อแตกต่างสำคัญคือการจัดเรียงมัดท่อลำเลียง (พืชใบเลี้ยงเดี่ยว vs ใบเลี้ยงคู่)</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-green-200 bg-green-900/40 p-2 rounded-lg pl-4 border-l-4 border-green-400">บทที่ 10: การลำเลียงของพืช</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● การคายน้ำ:</b> เกิดที่ปากใบ (Stomata) เป็นแรงดึงหลักที่ทำให้พืชดึงน้ำจากรากขึ้นสู่ยอดได้ (Transpiration pull)</p>
+                    <p><b class="text-white">● การลำเลียงอาหาร:</b> เกิดใน Phloem โดยใช้ทฤษฎีความต่างของความดัน (Pressure Flow Hypothesis)</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-green-200 bg-green-900/40 p-2 rounded-lg pl-4 border-l-4 border-green-400">บทที่ 11: การสังเคราะห์ด้วยแสง</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● Light Reaction:</b> ใช้แสงสร้าง ATP และ NADPH ที่ Thylakoid</p>
+                    <p><b class="text-white">● Calvin Cycle:</b> ตรึง $CO_2$ เพื่อสร้างน้ำตาลใน Stroma</p>
+                    <p><b class="text-white">● พืช C3, C4, CAM:</b> กลไกการตรึงคาร์บอนที่ต่างกันเพื่อลดการสูญเสียน้ำ</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-green-200 bg-green-900/40 p-2 rounded-lg pl-4 border-l-4 border-green-400">บทที่ 12: การสืบพันธุ์และการตอบสนอง</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● การปฏิสนธิคู่ (Double Fertilization):</b> ลักษณะเด่นของพืชดอก (ได้ Zygote และ Endosperm)</p>
+                    <p><b class="text-white">● ฮอร์โมนพืช:</b> Auxin (เร่งโต), Cytokinin (แบ่งเซลล์), Gibberellin (ยืดตัว), Ethylene (ผลไม้สุก), Abscisic acid (ยับยั้ง/ปิดปากใบ)</p>
+                </div>
+            </section>
+        </div>
+    `,
+    
+    m5_term2: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
+            <button onclick="showContent('m5_menu')" class="text-orange-400 hover:text-orange-300 text-sm font-bold flex items-center mb-2 transition">
+                ◀ ย้อนกลับไปเลือกเทอม
+            </button>
+            
+            <h3 class="text-3xl font-black text-orange-300 border-b-2 border-orange-500 pb-2">🫀 สรุปชีวะ ม.5 เทอม 2 (ระบบร่างกาย)</h3>
+            
+            <section class="space-y-3">
+                <h4 class="text-lg font-bold text-orange-200 bg-orange-900/40 p-2 rounded-lg pl-4 border-l-4 border-orange-400">บทที่ 13: การย่อยอาหาร</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● การย่อยในปาก:</b> เคี้ยว (เชิงกล) + เอนไซม์ Amylase ย่อยแป้ง</p>
+                    <p><b class="text-white">● กระเพาะอาหาร:</b> ย่อยโปรตีนโดยเอนไซม์ Pepsin (ทำงานดีในสภาวะกรด HCl)</p>
+                    <p><b class="text-white">● ลำไส้เล็ก:</b> จุดสำคัญที่สุด! ย่อยทุกอย่างและดูดซึมสารอาหาร มีน้ำดีจากตับช่วยทำให้ไขมันแตกตัว (Emulsification)</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-orange-200 bg-orange-900/40 p-2 rounded-lg pl-4 border-l-4 border-orange-400">บทที่ 14: การหายใจ</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● การแลกเปลี่ยนแก๊ส:</b> เกิดที่ถุงลมปอด (Alveoli) โดยการแพร่ (Diffusion)</p>
+                    <p><b class="text-white">● การลำเลียง $O_2$:</b> ไปกับ Hemoglobin ในเม็ดเลือดแดง</p>
+                    <p><b class="text-white">● การลำเลียง $CO_2$:</b> ส่วนใหญ่อยู่ในรูป Bicarbonate ($HCO_3^-$) ในพลาสมา</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-orange-200 bg-orange-900/40 p-2 rounded-lg pl-4 border-l-4 border-orange-400">บทที่ 15: การหมุนเวียนเลือดและน้ำเหลือง</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● หัวใจมนุษย์:</b> 4 ห้องสมบูรณ์ (บนรับ ล่างส่ง) ห้องล่างซ้าย (Left Ventricle) ผนังหนาสุดเพราะต้องฉีดเลือดไปทั่วร่างกาย</p>
+                    <p><b class="text-white">● หลอดเลือด:</b> Artery (ออกจากหัวใจ), Vein (เข้าหัวใจ - มีลิ้นกั้น), Capillary (แลกเปลี่ยนสาร)</p>
+                    <p><b class="text-white">● หมู่เลือด:</b> ระบบ ABO และ Rh (ต้องระวังเรื่อง Antigen และ Antibody เวลาให้เลือด)</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-orange-200 bg-orange-900/40 p-2 rounded-lg pl-4 border-l-4 border-orange-400">บทที่ 16: ระบบภูมิคุ้มกัน</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● แบบไม่จำเพาะ (Innate):</b> ผิวหนัง, การอักเสบ, เม็ดเลือดแดงจับกินเชื้อโรค (Phagocytosis)</p>
+                    <p><b class="text-white">● แบบจำเพาะ (Adaptive):</b> B-cell (สร้าง Antibody) และ T-cell (ทำลายเซลล์ติดเชื้อ)</p>
+                    <p><b class="text-white">● ภูมิคุ้มกันก่อเอง (Vaccine):</b> ฉีดเชื้อที่อ่อนกำลัง / **รับมา (Serum):** ฉีดแอนติบอดีโดยตรง เช่น แก้พิษสุนัขบ้า</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-orange-200 bg-orange-900/40 p-2 rounded-lg pl-4 border-l-4 border-orange-400">บทที่ 17: การขับถ่าย</h4>
+                <div class="px-4 text-sm space-y-2">
+                    <p><b class="text-white">● ไต (Kidney):</b> หน่วยทำงานคือ <b>Nephron</b> ทำหน้าที่กรองเลือด ดูดกลับสารที่มีประโยชน์ และขับของเสียออกทางปัสสาวะ</p>
+                    <p><b class="text-white">● ของเสียไนโตรเจน:</b> Ammonia (สัตว์น้ำ), Urea (สัตว์เลี้ยงลูกด้วยนม), Uric acid (นก/แมลง)</p>
+                </div>
+            </section>
+            <div class="mt-8">
+                <a href="https://www.innerbody.com/htm/body.html" target="_blank" class="block w-full py-5 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl font-black text-white text-center shadow-xl hover:scale-105 transition-all no-underline">🧪 เปิดห้อง Lab จำลองร่างกาย 3D (InnerBody) ↗️</a>
+            </div>
+        </div>
+    `,
+    m6_menu: `
+        <div class="space-y-6 text-gray-200">
+            <h3 class="text-3xl font-black text-green-400 border-b-2 border-green-500 pb-2">🌿 เลือกเทอม (ชั้น ม.6)</h3>
+            
+            <div class="grid gap-4 mt-4">
+                <button onclick="showContent('m6_term1')" class="bg-blue-900/30 hover:bg-blue-800/60 p-6 rounded-2xl border border-blue-500/50 transition-all text-left btn-feedback">
+                    <div class="font-bold text-xl text-blue-200 mb-1">ภาคเรียนที่ 1 (เล่ม 5) 🧠</div>
+                    <p class="text-sm font-normal text-gray-400">เน้นเรื่อง "การควบคุมและพฤติกรรม": ระบบประสาท, อวัยวะรับความรู้สึก, ระบบต่อมไร้ท่อ และพฤติกรรมสัตว์</p>
+                </button>
+
+                <button onclick="showContent('m6_term2')" class="bg-teal-900/30 hover:bg-teal-800/60 p-6 rounded-2xl border border-teal-500/50 transition-all text-left btn-feedback">
+                    <div class="font-bold text-xl text-teal-200 mb-1">ภาคเรียนที่ 2 (เล่ม 6) 🌎</div>
+                    <p class="text-sm font-normal text-gray-400">เน้นเรื่อง "ระบบนิเวศและประชากร": ความหลากหลายทางชีวภาพ, ประชากร, และทรัพยากรธรรมชาติ</p>
+                </button>
+            </div>
+
+            <button onclick="document.getElementById('libraryScreen').classList.add('hidden'); chooseLevel('m6')" 
+                class="w-full py-4 mt-8 bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl font-black text-white shadow-xl hover:scale-105 transition btn-feedback">
+                🚀 ข้ามไปทำแบบทดสอบ ม.6 รวม (30 ข้อ)
+            </button>
+        </div>
+    `,
+    m6_term1: `
+    <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
+        <button onclick="showContent('m6_menu')" class="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center mb-2 transition">
+            ◀ ย้อนกลับไปเลือกเทอม
+        </button>
+        
+        <h3 class="text-3xl font-black text-blue-300 border-b-2 border-blue-500 pb-2">🧠 สรุปชีวะ ม.6 เทอม 1 (การควบคุมและสืบพันธุ์)</h3>
+        
+        <section class="space-y-3">
+            <h4 class="text-lg font-bold text-blue-200 bg-blue-900/40 p-2 rounded-lg pl-4 border-l-4 border-blue-400">บทที่ 18: ระบบประสาทและอวัยวะรับความรู้สึก</h4>
+            <div class="px-4 text-sm space-y-2">
+                <p><b class="text-white">● เซลล์ประสาท (Neuron):</b> ประกอบด้วย Dendrite (รับ) และ Axon (ส่ง) สัญญาณผ่าน Synapse ด้วยสารสื่อประสาท</p>
+                <p><b class="text-white">● ระบบประสาทส่วนกลาง (CNS):</b> สมองและไขสันหลัง ควบคุมการทำงานหลักและปฏิกิริยา Reflex</p>
+                <p><b class="text-white">● การทำงาน:</b> ใช้ศักย์ไฟฟ้าเยื่อเซลล์ (Action Potential) ในการส่งกระแสประสาทอย่างรวดเร็ว</p>
+            </div>
+        </section>
+
+        <section class="space-y-3 mt-6">
+            <h4 class="text-lg font-bold text-blue-200 bg-blue-900/40 p-2 rounded-lg pl-4 border-l-4 border-blue-400">บทที่ 19: ระบบต่อมไร้ท่อ (ฮอร์โมน)</h4>
+            <div class="px-4 text-sm space-y-2">
+                <p><b class="text-white">● ฮอร์โมน:</b> สารเคมีจากต่อมไร้ท่อ ลำเลียงผ่านเลือดไปสู่เป้าหมาย (ออกฤทธิ์ช้าแต่คุมได้นาน)</p>
+                <p><b class="text-white">● ต่อมสำคัญ:</b> ต่อมใต้สมอง (คุมต่อมอื่น), ตับอ่อน (อินซูลิน/กลูคากอน คุมน้ำตาล), ไทรอยด์ (เมแทบอลิซึม)</p>
+                <p><b class="text-white">● การควบคุม:</b> ใช้ระบบ Negative Feedback เพื่อรักษาสมดุลร่างกาย</p>
+            </div>
+        </section>
+
+        <section class="space-y-3 mt-6">
+            <h4 class="text-lg font-bold text-blue-200 bg-blue-900/40 p-2 rounded-lg pl-4 border-l-4 border-blue-400">บทที่ 20: ระบบสืบพันธุ์และการเจริญเติบโต</h4>
+            <div class="px-4 text-sm space-y-2">
+                <p><b class="text-white">● การสืบพันธุ์มนุษย์:</b> กระบวนการสร้างอสุจิ (ชาย) และเซลล์ไข่ (หญิง) รวมถึงรอบประจำเดือน</p>
+                <p><b class="text-white">● การเจริญเติบโต:</b> ขั้นตอนสำคัญคือ Cleavage → Blastulation → Gastrulation (เกิดเนื้อเยื่อ 3 ชั้น)</p>
+            </div>
+        </section>
+
+        <section class="space-y-3 mt-6">
+            <h4 class="text-lg font-bold text-blue-200 bg-blue-900/40 p-2 rounded-lg pl-4 border-l-4 border-blue-400">บทที่ 21: พฤติกรรมของสัตว์</h4>
+            <div class="px-4 text-sm space-y-2">
+                <p><b class="text-white">● มาแต่กำเนิด (Innate):</b> FAP, Taxis, Kinesis ไม่ต้องอาศัยประสบการณ์</p>
+                <p><b class="text-white">● การเรียนรู้ (Learning):</b> Habituation (เคยชิน), Imprinting (ฝังใจ), การลองผิดลองถูก และการใช้เหตุผล</p>
+            </div>
+        </section>
+
+        <div class="mt-8">
+            <a href="https://www.getbodysmart.com/nervous-system" target="_blank" class="block w-full py-5 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-2xl font-black text-white text-center shadow-xl hover:scale-105 transition-all no-underline">🧠 สำรวจโครงสร้างระบบประสาทแบบ Interactive ↗️</a>
+        </div>
+    </div>
+`,
+m6_term2: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in slide-in-from-right-4 duration-300">
+            <button onclick="showContent('m6_menu')" class="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center mb-2 transition">
+                ◀ ย้อนกลับไปเลือกเทอม
+            </button>
+            
+            <h3 class="text-3xl font-black text-cyan-300 border-b-2 border-cyan-500 pb-2">🌍 สรุปชีวะ ม.6 เทอม 2 (ระบบนิเวศ & ความหลากหลาย)</h3>
+            
+            <section class="space-y-3">
+                <h4 class="text-lg font-bold text-cyan-200 bg-cyan-900/40 p-2 rounded-lg pl-4 border-l-4 border-cyan-400">บทที่ 22: ระบบนิเวศ (Ecosystem)</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">● การถ่ายทอดพลังงาน:</b> ผ่านโซ่อาหาร (Food Chain) และสายใยอาหาร (Food Web)</p>
+                    <blockquote class="border-l-2 border-yellow-500 pl-3 py-1 bg-yellow-900/20 text-[12px]">
+                        <b>กฎ 10 เปอร์เซ็นต์ (Ten Percent Law):</b> พลังงานส่งต่อไปยังลำดับถัดไปได้เพียง 10% อีก 90% สูญเสียเป็นความร้อนหรือใช้ในกิจกรรมร่างกาย
+                    </blockquote>
+                    <p><b class="text-white">● พีระมิดพลังงาน (Pyramid of Energy):</b> ต้องเป็นรูปทรงตั้งฐานกว้างเสมอ! เพราะพลังงานจะลดลงตามลำดับขั้นการกิน</p>
+                    <p><b class="text-white">● วัฏจักรสาร:</b> เน้น <b>วัฏจักรไนโตรเจน</b> (ใช้แบคทีเรีย Rhizobium ตรึง $N_2$) และ <b>วัฏจักรฟอสฟอรัส</b> (ไม่มีสถานะก๊าซในอากาศ สะสมในหิน/ดิน)</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-cyan-200 bg-cyan-900/40 p-2 rounded-lg pl-4 border-l-4 border-cyan-400">บทที่ 23: ประชากร (Population)</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">● การกระจายตัว:</b> แบบกลุ่ม (Clumped - พบบ่อยสุด), แบบสม่ำเสมอ (Uniform), แบบสุ่ม (Random)</p>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="bg-slate-800/50 p-2 rounded border border-slate-700">
+                            <span class="text-orange-400 font-bold">J-Shape:</span> เติบโตแบบ Exponential (ทรัพยากรไม่จำกัด)
+                        </div>
+                        <div class="bg-slate-800/50 p-2 rounded border border-slate-700">
+                            <span class="text-green-400 font-bold">S-Shape:</span> เติบโตแบบ Logistic (มีค่า $K$ หรือ Carrying Capacity)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-3 mt-6">
+                <h4 class="text-lg font-bold text-cyan-200 bg-cyan-900/40 p-2 rounded-lg pl-4 border-l-4 border-cyan-400">บทที่ 24: ความหลากหลายทางชีวภาพ</h4>
+                <div class="px-4 text-sm space-y-3">
+                    <p><b class="text-white">● 3 ระดับความหลากหลาย:</b> พันธุกรรม (Genetic), ชนิด (Species), และระบบนิเวศ (Ecological)</p>
+                    <p><b class="text-white">● ภัยคุกคาม (HIPPO):</b></p>
+                    <ul class="grid grid-cols-1 gap-1 text-gray-400 list-none pl-2">
+                        <li>📍 <b class="text-red-400">H</b>abitat Loss: การสูญเสียที่อยู่อาศัย (สาเหตุหลัก!)</li>
+                        <li>📍 <b class="text-red-400">I</b>nvasive Species: ชนิดพันธุ์ต่างถิ่นรุกราน</li>
+                        <li>📍 <b class="text-red-400">P</b>ollution: มลพิษทางสิ่งแวดล้อม</li>
+                        <li>📍 <b class="text-red-400">P</b>opulation Growth: ประชากรมนุษย์เพิ่มขึ้น</li>
+                        <li>📍 <b class="text-red-400">O</b>verexploitation: การใช้ทรัพยากรเกินจำกัด</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="mt-8">
+                <button onclick="startFastQuiz()" class="w-full py-5 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-2xl font-black text-white text-center shadow-xl hover:scale-105 transition-all">
+                    🎯 เริ่มทำแบบทดสอบ ม.6 เทอม 2 (10 ข้อ)
+                </button>
+            </div>
+        </div>
+    `,
+    animal: `
+        <div class="space-y-6 text-gray-200 text-sm">
+            <h3 class="text-3xl font-black text-yellow-400 border-b-2 border-yellow-500 pb-2">🐾 อาณาจักรสัตว์ (Kingdom Animalia)</h3>
+            
+            <section class="bg-gray-800/80 p-4 rounded-2xl border-l-4 border-yellow-500 shadow-lg">
+                <h4 class="text-lg font-bold text-yellow-300 mb-2">📌 Check-list จำแนกสัตว์</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] leading-relaxed">
+                    <ul class="space-y-1">
+                        <li>• <b>Tissue:</b> <span class="text-red-400">Porifera</span> (ไม่มีเนื้อเยื่อ) vs อื่นๆ (มี)</li>
+                        <li>• <b>Symmetry:</b> <span class="text-blue-400">Radial</span> (Cnidaria/Echinoderm ตัวเต็มวัย) vs <span class="text-blue-400">Bilateral</span> (ที่เหลือ)</li>
+                        <li>• <b>Coelom (ช่องว่าง):</b> <span class="text-green-400">Acoelom</span> (ตัวแบน), <span class="text-green-400">Pseudocoelom</span> (ตัวกลม), <span class="text-green-400">Eucoelom</span> (ตัวปล้องขึ้นไป)</li>
+                    </ul>
+                    <ul class="space-y-1">
+                        <li>• <b>Blastopore:</b> <span class="text-orange-400">Protostome</span> (ปากเกิดก่อน: Mollusk/Arthropod) vs <span class="text-orange-400">Deuterostome</span> (ทวารเกิดก่อน: Echinoderm/Chordate)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700">
+                    <p class="font-bold text-yellow-400 underline decoration-yellow-600">Porifera (ฟองน้ำ)</p>
+                    <p class="text-[11px] mt-1">- มี <b>Choanocyte</b> (เซลล์ปลอกคอ) โบกพัดอาหาร<br>- โครงร่างแข็งเรียก <b>Spicule</b></p>
+                </div>
+                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700">
+                    <p class="font-bold text-yellow-400 underline decoration-yellow-600">Cnidaria (แมงกะพรุน/ไฮดรา)</p>
+                    <p class="text-[11px] mt-1">- มี <b>Nematocyst</b> (เข็มพิษ)<br>- ทางเดินอาหารแบบไม่สมบูรณ์ (Incomplete)</p>
+                </div>
+                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700">
+                    <p class="font-bold text-blue-400 underline decoration-blue-600">Arthropoda (แมลง/กุ้ง)</p>
+                    <p class="text-[11px] mt-1">- กลุ่มใหญ่ที่สุด! มีระบบเลือดเปิด<br>- หายใจด้วยเหงือก/Trachea/Book lung</p>
+                </div>
+                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700">
+                    <p class="font-bold text-blue-400 underline decoration-blue-600">Echinodermata (ดาวทะเล)</p>
+                    <p class="text-[11px] mt-1">- <b>Water Vascular System</b> (ใช้แรงดันน้ำเคลื่อนที่)<br>- เป็น Deuterostome เหมือนมนุษย์</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-[10px] text-left border-collapse bg-indigo-900/10 rounded-lg">
+                    <thead>
+                        <tr class="border-b border-indigo-500/50 text-indigo-300">
+                            <th class="p-2">กลุ่มสัตว์</th>
+                            <th class="p-2">หัวใจ</th>
+                            <th class="p-2">การหายใจ</th>
+                            <th class="p-2">ลักษณะเด่น</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        <tr class="border-b border-gray-800">
+                            <td class="p-2 text-white">ปลา</td>
+                            <td class="p-2">2 ห้อง</td>
+                            <td class="p-2">เหงือก</td>
+                            <td class="p-2">เส้นข้างลำตัว (Lateral line)</td>
+                        </tr>
+                        <tr class="border-b border-gray-800">
+                            <td class="p-2 text-white">สะเทินน้ำสะเทินบก</td>
+                            <td class="p-2">3 ห้อง</td>
+                            <td class="p-2">ปอด/ผิวหนัง</td>
+                            <td class="p-2">Metamorphosis, ไข่มีวุ้น</td>
+                        </tr>
+                        <tr class="border-b border-gray-800">
+                            <td class="p-2 text-white">สัตว์เลื้อยคลาน</td>
+                            <td class="p-2">3 ห้อง*</td>
+                            <td class="p-2">ปอด</td>
+                            <td class="p-2">ผิวแห้งมีเกล็ด, ไข่มีเปลือก (Amniotic egg)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 text-white">นก/เลี้ยงลูกด้วยนม</td>
+                            <td class="p-2">4 ห้อง</td>
+                            <td class="p-2">ปอด</td>
+                            <td class="p-2">เลือดอุ่น (Homeotherm)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="text-[9px] text-gray-500 mt-1">*จระเข้มี 4 ห้องสมบูรณ์</p>
+            </div>
+
+            <div class="bg-red-900/20 p-3 rounded-xl border border-red-500/30">
+                <p class="font-bold text-red-400 text-xs">⚠️ อย่าจำสับสน!</p>
+                <ul class="text-[11px] list-disc pl-4 space-y-1">
+                    <li><b>ดาวทะเล (Starfish):</b> ไม่ใช่ปลา แต่อยู่ Echinodermata</li>
+                    <li><b>หมึก (Squid):</b> ไม่ใช่ปลา แต่อยู่ Mollusca (กลุ่มเดียวกับหอย)</li>
+                    <li><b>วาฬ/โลมา:</b> ไม่ใช่ปลา แต่เป็นสัตว์เลี้ยงลูกด้วยนม</li>
+                </ul>
+            </div>
+        </div>
+    `,
+
+   muscle: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in zoom-in duration-300">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🦴</span>
+                <h3 class="text-3xl font-black text-yellow-400 uppercase tracking-wider">ระบบโครงกระดูกและกล้ามเนื้อ</h3>
+            </div>
+
+            <div class="bg-slate-900/60 border-2 border-yellow-500/40 p-5 rounded-2xl shadow-xl">
+                <h4 class="text-xl font-bold text-yellow-400 mb-3 flex items-center gap-2">
+                    📌 Check-list ระบบโครงกระดูก
+                </h4>
+                <p class="text-sm mb-4 text-gray-300">ร่างกายผู้ใหญ่ประกอบด้วยกระดูกทั้งหมด <span class="text-white font-bold">206 ชิ้น</span> แบ่งเป็น 2 กลุ่มหลัก:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <ul class="space-y-2">
+                        <li>• <b class="text-white">Axial Skeleton (กระดูกแกน):</b> <span class="text-orange-400">80 ชิ้น</span> (กะโหลก, สันหลัง, ซี่โครง, อก)</li>
+                    </ul>
+                    <ul class="space-y-2">
+                        <li>• <b class="text-white">Appendicular (กระดูกรยางค์):</b> <span class="text-orange-400">126 ชิ้น</span> (แขน, ขา, สะบัก, เชิงกราน)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                    <h5 class="text-blue-400 font-bold mb-2 border-b border-slate-700 pb-1">ก. กระดูกแกน (Axial)</h5>
+                    <ul class="text-sm space-y-1 text-gray-300">
+                        <li>- <b class="text-white">Skull:</b> ปกป้องสมอง</li>
+                        <li>- <b class="text-white">Vertebral Column:</b> 33 ชิ้น (C, T, L, S, C)</li>
+                        <li>- <b class="text-white">Ribs:</b> 12 คู่ ปกป้องหัวใจ/ปอด</li>
+                        <li>- <b class="text-white">Sternum:</b> กระดูกอกตรงกลาง</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                    <h5 class="text-green-400 font-bold mb-2 border-b border-slate-700 pb-1">ข. กระดูกรยางค์ (Appendicular)</h5>
+                    <ul class="text-sm space-y-1 text-gray-300">
+                        <li>- <b class="text-white">ส่วนแขน:</b> Scapula, Clavicle, Humerus, Radius, Ulna</li>
+                        <li>- <b class="text-white">ส่วนขา:</b> Pelvic, Femur (ยาวสุด), Tibia, Fibula</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-700 bg-slate-900/40">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead class="bg-slate-800 text-blue-300 uppercase font-bold">
+                        <tr>
+                            <th class="p-3">ชนิดกล้ามเนื้อ</th>
+                            <th class="p-3 text-center">ลักษณะ</th>
+                            <th class="p-3">ตำแหน่ง/การทำงาน</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr>
+                            <td class="p-3 font-bold text-white">Skeletal (โครงร่าง)</td>
+                            <td class="p-3 text-center">มีลาย, หลาย Nucleus</td>
+                            <td class="p-3">ติดกระดูก, <span class="text-green-400 font-bold">Voluntary</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">Smooth (เรียบ)</td>
+                            <td class="p-3 text-center">ไม่มีลาย, รูปกระสวย</td>
+                            <td class="p-3">อวัยวะภายใน, <span class="text-red-400 font-bold">Involuntary</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">Cardiac (หัวใจ)</td>
+                            <td class="p-3 text-center">มีลาย, แตกแขนง</td>
+                            <td class="p-3">หัวใจเท่านั้น, <span class="text-red-400 font-bold">Involuntary</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                <h4 class="text-yellow-400 font-bold mb-3 flex items-center gap-2">💪 กล้ามเนื้อและการทำงาน</h4>
+                <div class="text-sm space-y-2">
+                    <p>● <b class="text-white italic">Antagonism:</b> การทำงานเป็นคู่ตรงข้าม (ตัวหนึ่งหด ตัวหนึ่งคลาย)</p>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-900/50 p-3 rounded-lg">
+                        <div><span class="text-blue-400 font-bold">Flexor:</span> งออวัยวะ (เช่น Biceps)</div>
+                        <div><span class="text-orange-400 font-bold">Extensor:</span> เหยียดอวัยวะ (เช่น Triceps)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-red-950/30 border border-red-500/40 p-5 rounded-2xl shadow-lg border-l-8">
+                <h4 class="text-red-400 font-bold mb-3 flex items-center gap-2">
+                    ⚠️ อย่าจำสับสน! (ส่วนประกอบเสริม)
+                </h4>
+                <ul class="text-sm space-y-2 text-gray-300">
+                    <li>• <b class="text-white">Ligament (เอ็นยึดกระดูก):</b> เชื่อมระหว่าง <span class="text-red-400 underline">กระดูก กับ กระดูก</span></li>
+                    <li>• <b class="text-white">Tendon (เอ็นกล้ามเนื้อ):</b> เชื่อมระหว่าง <span class="text-red-400 underline">กล้ามเนื้อ กับ กระดูก</span></li>
+                    <li>• <b class="text-white">Cartilage (กระดูกอ่อน):</b> ทำหน้าที่ <span class="text-blue-300 italic">ลดแรงเสียดทาน</span> บริเวณข้อต่อ</li>
+                </ul>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="musclefastquiz()" class="w-full py-4 bg-gradient-to-r from-yellow-600 to-orange-700 rounded-xl font-black text-white shadow-xl hover:scale-[1.02] transition-transform">
+                    🔥 ตะลุยโจทย์ระบบโครงสร้าง (Fast Quiz)
+                </button>
+            </div>
+        </div>
+    `,
+
+    plant: `
+        <div class="space-y-6 text-gray-200 animate-in fade-in zoom-in duration-300">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🌿</span>
+                <h3 class="text-3xl font-black text-green-400 uppercase tracking-wider">เนื้อเยื่อและการลำเลียงของพืช</h3>
+            </div>
+
+            <div class="bg-slate-900/60 border-2 border-green-500/40 p-5 rounded-2xl shadow-xl">
+                <h4 class="text-xl font-bold text-green-400 mb-3 flex items-center gap-2">
+                    📌 Check-list ประเภทเนื้อเยื่อพืช
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="space-y-2">
+                        <p class="font-bold text-white border-b border-green-800 pb-1">1. เนื้อเยื่อเจริญ (Meristem)</p>
+                        <ul class="pl-2 space-y-1">
+                            <li>• <b class="text-green-300">Apical:</b> ปลายยอด/ราก (พืชสูงขึ้น)</li>
+                            <li>• <b class="text-green-300">Lateral:</b> วาสคิวลาร์ แคมเบียม (พืชอ้วนขึ้น)</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="font-bold text-white border-b border-green-800 pb-1">2. เนื้อเยื่อถาวร (Permanent)</p>
+                        <ul class="pl-2 space-y-1">
+                            <li>• <b class="text-blue-300">Epidermis:</b> ผิวชั้นนอกสุด (มีเซลล์คุม)</li>
+                            <li>• <b class="text-blue-300">Parenchyma:</b> พบมากสุด สะสมอาหาร</li>
+                            <li>• <b class="text-blue-300">Sclerenchyma:</b> <span class="text-red-400 italic">เซลล์ตายแล้ว</span> ผนังหนามาก</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-700 bg-slate-900/40 shadow-inner">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead class="bg-slate-800 text-green-300 uppercase font-bold">
+                        <tr>
+                            <th class="p-3">คุณสมบัติ</th>
+                            <th class="p-3">Xylem (ไซเล็ม)</th>
+                            <th class="p-3">Phloem (โฟลเอ็ม)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-gray-300">
+                        <tr>
+                            <td class="p-3 font-bold text-white">สิ่งที่ขนส่ง</td>
+                            <td class="p-3">💦 น้ำ + แร่ธาตุ</td>
+                            <td class="p-3">🍭 อาหาร (น้ำตาล)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">สถานะเซลล์</td>
+                            <td class="p-3 text-red-400 font-semibold italic">ตายแล้ว (ท่อกลวง)</td>
+                            <td class="p-3 text-green-400 font-semibold">มีชีวิต</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">ทิศทาง</td>
+                            <td class="p-3">⬆️ ล่างขึ้นบน (ทางเดียว)</td>
+                            <td class="p-3">↕️ ทุกทิศทาง (Source ➔ Sink)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-white">แรงขับเคลื่อน</td>
+                            <td class="p-3">การคายน้ำ (Transpiration)</td>
+                            <td class="p-3">ความดัน (Pressure Flow)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+                <h4 class="text-blue-400 font-bold mb-3 flex items-center gap-2">💧 เส้นทางของน้ำเข้าสู่ราก (Root Pathways)</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[13px]">
+                    <div class="p-2 bg-slate-900/50 rounded border-l-4 border-orange-500">
+                        <b class="text-orange-400">Apoplast:</b> วิ่งตามผนังเซลล์ (เร็วที่สุด แต่โดนกั้นที่ Endodermis)
+                    </div>
+                    <div class="p-2 bg-slate-900/50 rounded border-l-4 border-green-500">
+                        <b class="text-green-400">Symplast:</b> วิ่งผ่านไซโทพลาซึม (เข้าช่อง Plasmodesmata)
+                    </div>
+                    <div class="p-2 bg-slate-900/50 rounded border-l-4 border-blue-500">
+                        <b class="text-blue-400">Transmembrane:</b> วิ่งทะลุผ่านเยื่อหุ้มเซลล์ทีละชั้น
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-950/30 border border-blue-500/40 p-5 rounded-2xl shadow-lg border-l-8">
+                <h4 class="text-blue-300 font-bold mb-2 flex items-center gap-2">💡 เกร็ดความรู้ (ม.ปลาย)</h4>
+                <ul class="text-sm space-y-2 text-gray-400">
+                    <li>• <b class="text-white">Transpiration Pull:</b> เป็นแรงหลักที่ทำให้พืชสูงเป็น 100 เมตรส่งน้ำขึ้นไปถึงยอดได้</li>
+                    <li>• <b class="text-white">Companion Cell:</b> เซลล์พี่เลี้ยงใน Phloem คอยส่งพลังงานให้ Sieve tube ที่ไม่มีนิวเคลียส</li>
+                    <li>• <b class="text-white">Casparian Strip:</b> แถบขี้ผึ้งที่ชั้น Endodermis บังคับให้น้ำแบบ Apoplast ต้องเปลี่ยนมาเข้า Symplast แทน</li>
+                </ul>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="startFastQuiz()" class="w-full py-4 bg-gradient-to-r from-green-600 to-blue-700 rounded-xl font-black text-white shadow-xl hover:scale-[1.02] transition-transform">
+                    🧪 ทดสอบความรู้ "เนื้อเยื่อพืช" (Fast Quiz)
+                </button>
+            </div>
+        </div>
+    `,
+};
+
+const biologyQuiz = [
+    { q: "ส่วนประกอบใดพบเฉพาะในเซลล์พืช?", a: "ผนังเซลล์", opt: ["นิวเคลียส", "ผนังเซลล์", "ไรโบโซม", "เยื่อหุ้มเซลล์"] },
+    { q: "การสังเคราะห์ด้วยแสงเกิดขึ้นที่ออร์แกเนลล์ใด?", a: "คลอโรพลาสต์", opt: ["ไมโทคอนเดรีย", "คลอโรพลาสต์", "แวคิวโอล", "กอลจิบอดี"] },
+    // เพิ่มข้ออื่นๆ ต่อไปเรื่อยๆ ได้เลย
+];
+playMusic(type);
+// --- ฟังก์ชันดูคลังเนื้อหา ---
+function showContent(key) {
+    const container = document.getElementById('libraryContent');
+    if (!container) return;
+    
+    container.innerHTML = biologyNotes[key]; // ดึงจาก biologyNotes
+    
+    container.classList.remove('page-transition');
+    void container.offsetWidth; 
+    container.classList.add('page-transition');
+}
+
+// --- ฟังก์ชันทำข้อสอบ FAST ---
+function startFastQuiz() {
+    const container = document.getElementById('libraryContent');
+    if (!container) return;
+
+    // สุ่ม 10 ข้อจาก biologyQuiz
+    const shuffled = [...biologyQuiz].sort(() => 0.5 - Math.random()).slice(0, 10);
+    
+    let quizHTML = `<div class="p-6 text-white page-transition">
+        <h2 class="text-2xl font-bold mb-6 shimmer-text text-center">⚡ FAST QUIZ (10 ข้อ)</h2>`;
+
+    shuffled.forEach((item, index) => {
+        quizHTML += `
+            <div class="mb-8 bg-slate-800/50 p-4 rounded-xl border border-white/10 shadow-lg">
+                <p class="text-lg mb-4 font-semibold text-green-400">${index + 1}. ${item.q}</p>
+                <div class="grid grid-cols-1 gap-3">
+                    ${item.opt.map(opt => `
+                        <button onclick="checkAnswer(this, '${item.a}')" 
+                                class="p-4 bg-slate-700/50 hover:bg-slate-600 rounded-xl transition-all btn-feedback text-left border border-white/5">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>`;
+    });
+
+    // ปุ่มกลับหน้าหลัก (ใช้วิธีเปลี่ยนหน้าจอ หรือ Reload)
+    quizHTML += `<button onclick="window.location.reload()" class="w-full p-4 bg-red-500/80 rounded-xl font-bold btn-feedback mt-4">↩️ กลับเมนูหลัก</button></div>`;
+    
+    container.innerHTML = quizHTML;
+}
+
+// ฟังก์ชันเช็คคำตอบ (ห้ามลืมวาง!)
+function checkAnswer(btn, correct) {
+    const buttons = btn.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.disabled = true); // กดแล้วห้ามกดซ้ำ
+
+    if (btn.innerText.trim() === correct) {
+        btn.classList.replace('bg-slate-700/50', 'bg-green-500');
+        btn.innerHTML += " ✨ (ถูกต้อง!)";
+    } else {
+        btn.classList.replace('bg-slate-700/50', 'bg-red-500');
+        btn.innerHTML += " ❌ (ผิดนะ)";
+    }
+}
+
+// ==========================================
+// 🚀 ส่วนที่ 3: ระบบการทำงาน (ต่อจาก biologyQuiz)
+// ==========================================
+
+// ฟังก์ชันจัดการการแสดงผลเนื้อหา (รองรับทั้ง libraryContent และ contentText)
+function showContent(key) {
+    // ค้นหากล่องสำหรับแสดงผลที่ตรงกับ HTML ของคุณ
+    const container = document.getElementById('libraryContent') || document.getElementById('contentText'); 
+    
+    if (container) {
+        // ดึงข้อมูลจาก biologyNotes ถ้าไม่มีให้ขึ้นข้อความแจ้งเตือน
+        container.innerHTML = biologyNotes[key] || "<p class='text-center text-red-400'>กำลังอัปเดตข้อมูล...</p>"; 
+        
+        // เล่นอนิเมชั่นพุ่งเข้า
+        container.classList.remove('page-transition');
+        void container.offsetWidth; 
+        container.classList.add('page-transition');
+        
+        // เลื่อนหน้าจอกลับไปด้านบนสุด (เผื่อเนื้อหายาว)
+        container.scrollTop = 0; 
+        
+        // ถ้าใช้โครงสร้างที่มี contentDisplay ให้แสดงผลด้วย
+        const display = document.getElementById('contentDisplay');
+        if(display) {
+            display.classList.remove('hidden');
+            display.scrollIntoView({ behavior: 'smooth' });
+        }
+    } else {
+        console.error("หา ID สำหรับแสดงผลไม่เจอครับ เช็คใน HTML ว่ามี id='libraryContent' ไหม");
+    }
+}
+
+// แสดงหน้าคลังความรู้
+function showLibrary() {
+    const startScreen = document.getElementById('startScreen');
+    const libraryScreen = document.getElementById('libraryScreen');
+    if(startScreen) startScreen.classList.add('hidden');
+    if(libraryScreen) libraryScreen.classList.remove('hidden');
+}
+
+// ==========================================
+// ⚡ ระบบ FAST QUIZ
+// ==========================================
+let currentScore = 0; // ตัวแปรเก็บคะแนน
+
+function startFastQuiz() {
+    // หาระบุกล่องแสดงผล
+    const container = document.getElementById('libraryContent') || document.getElementById('noteContent'); 
+    if (!container) return;
+
+    // สุ่ม 10 ข้อจาก biologyQuiz (ดึงชุดข้อมูลเดิมมาใช้)
+    const shuffled = [...biologyQuiz].sort(() => 0.5 - Math.random()).slice(0, 10);
+    currentScore = 0; // รีเซ็ตคะแนนใหม่
+    
+    let quizHTML = `<div class="p-4 text-white page-transition">
+        <h2 class="text-2xl font-bold mb-4 shimmer-text text-center">⚡ FAST QUIZ (สุ่ม 10 ข้อ)</h2>`;
+
+    shuffled.forEach((item, index) => {
+        quizHTML += `
+            <div class="mb-6 bg-slate-800/80 p-4 rounded-xl border border-slate-600 shadow-lg">
+                <p class="text-lg mb-3 font-semibold text-green-400">${index + 1}. ${item.q}</p>
+                <div class="grid grid-cols-1 gap-2">
+                    ${item.opt.map(opt => `
+                        <button onclick="checkQuizAnswer(this, '${item.a}')" 
+                                class="p-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-left btn-feedback transition-colors border border-white/5">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>`;
+    });
+    
+    // ปุ่มกลับหน้าหลัก
+    quizHTML += `
+        <button onclick="window.location.reload()" class="w-full p-4 bg-red-500/80 rounded-xl font-bold btn-feedback mt-4 hover:bg-red-500 transition-colors">
+            ↩️ สรุปคะแนน & กลับเมนูหลัก
+        </button>
+    </div>`;
+
+    container.innerHTML = quizHTML;
+}
+
+// ฟังก์ชันตรวจคำตอบ
+function checkQuizAnswer(btn, correct) {
+    const buttons = btn.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.disabled = true); // ล็อคปุ่มหลังตอบ
+    
+    if (btn.innerText.trim() === correct) {
+        btn.classList.replace('bg-slate-700', 'bg-green-600');
+        btn.innerHTML += " ✅ (ถูกต้อง!)";
+        currentScore++;
+    } else {
+        btn.classList.replace('bg-slate-700', 'bg-red-600');
+        btn.innerHTML += ` ❌ (ผิด! คำตอบคือ: ${correct})`;
+    }
+}
+
+// ==========================================
+// 📜 ระบบ Scroll Progress Bar
+// ==========================================
+window.onscroll = function() {
+    const progressBar = document.getElementById("progressBar");
+    if(progressBar) {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let scrolled = (winScroll / height) * 100;
+        progressBar.style.width = scrolled + "%";
+    }
+};
+
+// ==========================================
+// 🎵 ระบบเสียง Background Music
+// ==========================================
+const musicMap = {
+    menu: 'music/menu.mp3',
+    m4: 'music/m4.mp3',
+    m5: 'music/m5.mp3',
+    m6: 'music/m6.mp3',
+    posn: 'music/posn.mp3',
+    muscle: 'music/muscle.mp3',
+    all: 'music/all.mp3',
+    fast: 'music/fast.mp3',
+    library: 'music/library.mp3'
+};
+
+let musicEnabled = true;
+
+function playMusic(mode = 'menu') {
+    if (!musicEnabled) return;
+
+    const audio = document.getElementById('bgMusic');
+    if(!audio) return; // ป้องกัน Error ถ้าหา Tag Audio ไม่เจอ
+
+    const src = musicMap[mode] || musicMap.menu;
+
+    // เปลี่ยนเพลงเฉพาะตอนที่ URL ไม่ตรงกับเพลงปัจจุบัน
+    if (audio.src !== new URL(src, window.location.href).href) {
+        audio.src = src;
+    }
+
+    audio.volume = 0.35; // ตั้งความดัง 35%
+    audio.play().catch(() => {
+        console.log("ระบบเว็บบราว์เซอร์บล็อก Autoplay ไว้ ต้องให้ผู้ใช้คลิกอะไรสักอย่างในเว็บก่อนครับ");
+    });
+}
+
+function stopMusic() {
+    const audio = document.getElementById('bgMusic');
+    if(audio) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
+}
+
+function toggleMusic() {
+    musicEnabled = !musicEnabled;
+
+    if (musicEnabled) {
+        playMusic('menu');
+    } else {
+        stopMusic();
+    }
+}
+</script>
+</body>
+</html>
